@@ -243,3 +243,33 @@ public:
 		return comp1 > comp2;//a+b>b+a 那么就认为a>b为true
 	}
 };
+class Solution498 {
+public:
+	vector<int> findDiagonalOrder(vector<vector<int>>& matrix) {
+		int m, n;
+
+		if ((m = matrix.size())==0 ||( n = matrix[0].size())==0) {
+			return {};
+		}
+		vector<int> ret(m * n);
+		enum {
+			UP = 0,
+			DOWN
+		};
+		int dir=UP;//true为往上，false为往下
+		int x = 0, y = 0;
+		for (int i = 0; i < m * n; i++) {
+			ret[i] = matrix[x][y];
+			if (dir == UP) {
+				//只会撞到上面和右边
+				if (x==0) {
+					//撞了上面					
+					x -= 1;
+				}
+
+			}
+		}
+
+
+	}
+};
