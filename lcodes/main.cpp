@@ -3,16 +3,16 @@
 
 int main() 
 {
-	Solution93 solution;
-	string s = "19216811";
-	vector<string> result = solution.restoreIpAddresses(s);
+	Solution498 solution;
+	vector<vector<int>> matrix =
+	{
+		{1,2,3},
+		{4,5,6},
+		{7,8,9}
+	};
+	vector<int> result = solution.findDiagonalOrder(matrix);
 	//cout << result << endl;
-	for (auto it = result.begin(); it != result.end(); it++) {
-		for (auto iit = it->begin(); iit != it->end(); iit++) {
-			cout << *iit;
-		}
-		cout << endl;
-	}
+	printVector(result);
 
 	return 0;
 }
