@@ -862,11 +862,45 @@ public:
 		return ret;
 	}
 };
-/*
+
 class Solution406 {
 public:
+    vector<vector<int>> ret;
+    int queenNum = 0;
 	vector<vector<int>> reconstructQueue(vector<vector<int>>& people) {
+        sort(people.begin(), people.end(), compareHeight);
+        vector<bool> isInQueen(people.size(),false);
+        
 
 	}
+    void findHead(vector<vector<int>>& people,vector<bool>& isInQueen) {
+		for (int i = 0; i < people.size(); i++) {
+			//уреем╥            
+			if (isInQueen[i] == true) continue;
+			if (people[i][1] != 0) {
+				people[i][1] -= 1;
+			}
+			else {
+				ret.push_back(people[i]);
+				isInQueen[i] = true;
+                queenNum++;
+			}
+			for (int i = 0; i < people.size(); i++) {
+
+			}
+
+		}
+    }
+
+    bool compareHeight(vector<int> p1, vector<int> p2) {
+        if (p1[0] > p2[0]) {
+            return true;
+        }
+        else {
+            return false;
+        }
+
+    }
+
 };
-*/
+
