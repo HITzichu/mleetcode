@@ -746,6 +746,13 @@ public:
 		return comp1 > comp2;//a+b>b+a 那么就认为a>b为true
 	}
 };
+/*
+ * @lc app=leetcode.cn id=498 lang=cpp
+ *
+ * [498] 对角线遍历
+ */
+
+ // @lc code=start
 class Solution498 {
 public:
     vector<int> findDiagonalOrder(vector<vector<int>>& matrix) {
@@ -766,36 +773,100 @@ public:
             if (dir == UP) {
                 x += 1;
                 y -= 1;
-                if (y == -1) {
-                    //上边界
-
-                    y = 0;
-                    dir = DOWN;
-                }
-                if (x == n) {
-                    //右边界
-                    x = n - 1;
+                if (y == -1 && x == n) {
+                    //右上角
+                    x -= 1;
                     y += 2;
                     dir = DOWN;
                 }
+                else {
+                    if (y == -1) {
+                        //上边界
+
+                        y = 0;
+                        dir = DOWN;
+                    }
+                    if (x == n) {
+                        //右边界
+                        x = n - 1;
+                        y += 2;
+                        dir = DOWN;
+                    }
+                }
+
             }
             else {
                 x -= 1;
                 y += 1;
-                if (y == m) {
-                    //下边界
+                if (y == m && x == -1) {
+                    //左下角
                     x += 2;
                     y = m - 1;
                     dir = UP;
                 }
-                if (x == -1) {
-                    //左边界
-                    x = 0;
-                    dir = UP;
-                }                
-            }    
+                else
+                {
+                    if (y == m) {
+                        //下边界
+                        x += 2;
+                        y = m - 1;
+                        dir = UP;
+                    }
+                    if (x == -1) {
+                        //左边界
+                        x = 0;
+                        dir = UP;
+                    }
+                }
+
+            }
             ret[i] = matrix[y][x];
         }
         return ret;
     }
 };
+
+class Solution334 {
+public:
+	bool increasingTriplet(vector<int>& nums) {
+		int n = nums.size();
+		if (n < 3) {
+			return false;
+		}
+		int min1 = INT_MAX;
+		int min2 = INT_MAX;
+		for (int i = 0; i < n; i++) {
+			if (nums[i] > min2) {
+				return true;
+			}
+			if (nums[i] < min1) {
+				min1 = nums[i];
+			}
+			else if (nums[i] > min1 && nums[i] < min2) {
+				min2 = nums[i];
+			}
+		}
+		return false;
+	}
+};
+class Solution442 {
+public:
+	vector<int> findDuplicates(vector<int>& nums) {
+		vector<int> ret;
+		sort(nums.begin(), nums.end());
+		for (int i = 1; i < nums.size(); i++) {
+			if (nums[i] == nums[i - 1]) {
+				ret.push_back(nums[i]);
+			}
+		}
+		return ret;
+	}
+};
+/*
+class Solution406 {
+public:
+	vector<vector<int>> reconstructQueue(vector<vector<int>>& people) {
+
+	}
+};
+*/
