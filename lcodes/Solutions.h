@@ -851,56 +851,73 @@ public:
 };
 class Solution442 {
 public:
-	vector<int> findDuplicates(vector<int>& nums) {
-		vector<int> ret;
-		sort(nums.begin(), nums.end());
-		for (int i = 1; i < nums.size(); i++) {
-			if (nums[i] == nums[i - 1]) {
-				ret.push_back(nums[i]);
+	vector<vector<int>> ret;
+	vector <vector<int>> mpeople;
+	static bool compareHeight(vector<int>& p1, vector<int>& p2) {
+		//从小到大排个
+		if (p1[0] < p2[0]) {
+			return true;
+		}
+		else if (p1[0] > p2[0]) {
+			return false;
+		}
+		else { /*(p1[0] == p2[0])*/
+			//同号的第二位从大到小排，这样减去的时候符合逻辑
+			if (p1[1] > p2[1]) {
+				return true;
+			}
+			else {
+				return false;
+			}
+		}
+	}
+	void findHead(vector<vector<int>>& people, vector<bool>& isInQueen) {
+		for (int i = 0; i < mpeople.size(); i++) {
+			//找排头            
+			if (isInQueen[i] == false) {
+				if (mpeople[i][1] != 0) {
+					mpeople[i][1] -= 1;
+				}
+				else if (mpeople[i][1] == 0) {
+					ret.push_back(people[i]);
+					int index = i;
+					isInQueen[i] = true;
+					findHead(people, isInQueen);
+					break;
+				}
+			}
+		}
+	}
+	vector<vector<int>> reconstructQueue1(vector<vector<int>>& people) {
+		sort(people.begin(), people.end(), compareHeight);
+		mpeople = people;
+		vector<bool> isInQueen(people.size(), false);
+		findHead(people, isInQueen);
+		return ret;
+	}
+
+	vector<vector<int>> reconstructQueue(vector<vector<int>>& people) {
+		//身高从低到高，排位从高到低
+		sort(people.begin(), people.end(), [](vector<int> p1, vector<int> p2)
+			{
+				return p1[0] < p2[0] || (p1[0] == p2[0] && p1[1] > p2[1]);
+			}
+		);
+		vector<vector<int>> ret(people.size());
+		for (auto person : people) {
+			int n = person[1];
+			//找n个空位留给比他个高的
+			for (int i = 0; i < people.size(); i++) {
+				if (n == 0 && ret[i].empty()) {
+					ret[i] = person;
+					break;
+				}
+				if (ret[i].empty()) {
+					n--;
+				}
 			}
 		}
 		return ret;
 	}
-};
-
-class Solution406 {
-public:
-    vector<vector<int>> ret;
-    int queenNum = 0;
-	vector<vector<int>> reconstructQueue(vector<vector<int>>& people) {
-        sort(people.begin(), people.end(), compareHeight);
-        vector<bool> isInQueen(people.size(),false);
-        
-
-	}
-    void findHead(vector<vector<int>>& people,vector<bool>& isInQueen) {
-		for (int i = 0; i < people.size(); i++) {
-			//找排头            
-			if (isInQueen[i] == true) continue;
-			if (people[i][1] != 0) {
-				people[i][1] -= 1;
-			}
-			else {
-				ret.push_back(people[i]);
-				isInQueen[i] = true;
-                queenNum++;
-			}
-			for (int i = 0; i < people.size(); i++) {
-
-			}
-
-		}
-    }
-
-    bool compareHeight(vector<int> p1, vector<int> p2) {
-        if (p1[0] > p2[0]) {
-            return true;
-        }
-        else {
-            return false;
-        }
-
-    }
-
 };
 
