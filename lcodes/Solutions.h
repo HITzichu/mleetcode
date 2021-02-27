@@ -41,6 +41,14 @@ struct ListNode
     }
 
 };
+struct TreeNode {
+	int val;
+	TreeNode* left;
+	TreeNode* right;
+	TreeNode() : val(0), left(nullptr), right(nullptr) {}
+	TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+	TreeNode(int x, TreeNode* left, TreeNode* right) : val(x), left(left), right(right) {}
+};
 pair<ListNode*, ListNode*> reverseK(ListNode* head, ListNode* tail);
 vector<int> samPreSuf(string s);
 void printVector(vector<int> v);
@@ -920,4 +928,104 @@ public:
 		return ret;
 	}
 };
+class Solution105 {
+public:
+    TreeNode* buildTree(vector<int>& preorder, vector<int>& inorder) {
+        return getHead(0, preorder.size() - 1, 0, inorder.size() - 1, preorder, inorder);
+    }
+    /*
+        先序遍历的第一个为根节点，左子树的范围为中序遍历中找到的根节点的位置
+        左闭右开
+    */
+    TreeNode* getHead(int pstart, int pend, int istart, int iend, vector<int>& preorder, vector<int>& inorder) {
+        if (pstart > pend) {
+            return {};
+        }
+        else if (pstart == pend) {
+            return new TreeNode(preorder[pstart]);
+        }
+        TreeNode* head = new TreeNode(preorder[pstart]);
+        int i;
+        //中序遍历寻找根节点的位置，找到值为val的序号
+        for (i = istart; i <= iend; i++) {
+            if (inorder[i] == head->val) {
+                break;
+            }
+        }
 
+        int leftNum = i - istart;
+        int rightNum = iend - i;
+        //左子树的范围[pstart,i-1]
+        head->left = getHead(pstart + 1, pstart + leftNum, istart, istart + leftNum - 1, preorder, inorder);
+        //右子树的范围[i+1,pend]
+        head->right = getHead(1 + pstart + leftNum, pend, istart + leftNum + 1, iend, preorder, inorder);
+        return head;
+    }
+};
+/*
+ * @lc app=leetcode.cn id=106 lang=cpp
+ *
+ * [106] 从中序与后序遍历序列构造二叉树
+ * [9,3,15,20,7]
+ * [9,15,7,20,3]
+ * [3,9,20,null,null,15,7]
+ */
+
+class Solution106 {
+public:
+    unordered_map<int, int> map;
+    TreeNode* buildTree(vector<int>& inorder, vector<int>& postorder) {
+        if (inorder.size() != postorder.size()) {
+            //错误输入
+            return {};
+        }
+        for (int i = 0; i < inorder.size(); i++) {
+            map[inorder[i]] = i;
+        }
+        int n = inorder.size();
+        return findHead(0, n - 1, 0, n - 1, inorder, postorder);
+    }
+    TreeNode* findHead(int iStart, int iEnd, int pStart, int pEnd, vector<int>& inorder, vector<int>& postorder) {
+        if (iStart > iEnd) {
+            return {};
+        }
+        else if (iStart == iEnd) {
+            return new TreeNode(inorder[iStart]);
+        }
+        int i = map[postorder[pEnd]] - iStart;
+        // 中序遍历的istart+i即为头结点
+        TreeNode* head = new TreeNode(inorder[iStart + i]);
+        head->left = findHead(iStart, iStart + i - 1, pStart, pStart + i - 1, inorder, postorder);
+        head->right = findHead(iStart + i + 1, iEnd, pStart + i, pEnd - 1, inorder, postorder);
+        return head;
+    }
+};
+/*
+输入: 5
+输出:
+[
+row
+0	 [1],
+1	[1,1],
+2   [1,2,1],
+3  [1,3,3,1],
+4 [1,4,6,4,1]
+]
+*/
+class Solution118 {
+public:
+	vector<vector<int>> generate(int numRows) {
+		if (numRows <= 0) {
+			return {};
+		}
+
+		vector<vector<int>> ret(numRows);
+		for (int row = 0; row < numRows; row++) {
+			ret[row] = vector<int>(row + 1, 1);
+			for (int i = 1; i <= row - 1; i++) {
+				ret[row][i] = ret[row - 1][i - 1] + ret[row - 1][i];
+			}
+		}
+		return ret;
+	}
+};
