@@ -53,7 +53,7 @@ pair<ListNode*, ListNode*> reverseK(ListNode* head, ListNode* tail);
 vector<int> samPreSuf(string s);
 void printVector(vector<int> v);
 void printVector2(vector<vector<int>> dp);
-//68 test
+//68 Solution
 string pushnum(vector<string>& words, int start, int end, int maxWidth, int len, bool isEnd);
 
 
@@ -1027,5 +1027,57 @@ public:
 			}
 		}
 		return ret;
+	}
+};
+class Solution119 {
+public:
+	vector<int> getRow(int rowIndex) {
+		if (rowIndex < 1) {
+			return {};
+		}
+		vector<int> ret(rowIndex + 1, 1);
+		for (int row = 0; row <= rowIndex; row++) {
+			for (int i = row - 1; i > 0; i--) {
+				ret[i] = ret[i - 1] + ret[i];
+			}
+		}
+		return ret;
+	}
+};
+/*
+输入：triangle = [[2],[3,4],[6,5,7],[4,1,8,3]]
+输出：11
+*/
+class Solution120 {
+public:
+	int minimumTotal(vector<vector<int>>& triangle) {
+		//只有一行或者0行
+		int n = triangle.size();
+		if (n == 1) {
+			return triangle[0][0];
+		}
+
+		vector<vector<int>> dp(n);
+		dp[n - 1] = triangle[n - 1];
+		for (int row = n - 2; row >= 0; row--) {
+			dp[row].resize(triangle[row].size());
+			for (int i = 0; i < dp[row].size(); i++) {
+				dp[row][i] = triangle[row][i] + min(dp[row + 1][i], dp[row + 1][i + 1]);
+			}
+		}
+		return dp[0][0];
+	}
+};
+class Solution121 {
+public:
+	//超时
+	int maxProfit(vector<int>& prices) {
+		int maxPro = 0;
+		for (int i = 0; i < prices.size(); i++) {
+			for (int j = i + 1; j < prices.size(); j++) {
+				maxPro = max(maxPro, prices[j] - prices[i]);
+			}
+		}
+		return maxPro;
 	}
 };
