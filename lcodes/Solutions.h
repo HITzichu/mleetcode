@@ -1070,14 +1070,152 @@ public:
 };
 class Solution121 {
 public:
-	//超时
 	int maxProfit(vector<int>& prices) {
 		int maxPro = 0;
+		int minIncome = INT_MAX;
 		for (int i = 0; i < prices.size(); i++) {
-			for (int j = i + 1; j < prices.size(); j++) {
-				maxPro = max(maxPro, prices[j] - prices[i]);
+			minIncome = min(minIncome, prices[i]);
+			maxPro = max(maxPro, prices[i] - minIncome);
+		}
+		return maxPro;
+	}
+};
+class Solution122 {
+public:
+	int maxProfit(vector<int>& prices) {
+		int maxPro = 0;
+		for (int i = 1; i < prices.size(); i++) {
+			if (prices[i] > prices[i - 1]) {
+				//交易
+				maxPro += prices[i] - prices[i - 1];
 			}
 		}
 		return maxPro;
+	}
+};
+class Solution123 {
+public:
+	//[3,3,5,0,0,3,1,4]  6
+	// 4 6  
+	//7  8
+	int maxProfit(vector<int>& prices) {
+		int n = prices.size();
+		vector<int> leftMaxPro(n);
+		vector<int> rightMaxPro(n);
+		int maxPro = 0;
+		int minIncome = INT_MAX;
+		for (int i = 0; i < prices.size(); i++) {
+			minIncome = min(minIncome, prices[i]);
+			maxPro = max(maxPro, prices[i] - minIncome);
+			leftMaxPro[i] = maxPro;
+		}
+		int maxIncome = 0;
+		maxPro = 0;
+		for (int i = n - 1; i >= 0; i--) {
+			maxIncome = max(prices[i], maxIncome);
+			maxPro = max(maxPro, maxIncome - prices[i]);
+			rightMaxPro[i] = maxPro;
+		}
+		maxPro = 0;
+		for (int i = 0; i < n; i++) {
+			maxPro = max(maxPro, leftMaxPro[i] + rightMaxPro[i]);
+		}
+		return maxPro;
+	}
+};
+//单词接龙
+/*
+class Solution126 {
+public:
+	vector<vector<string>> findLadders(string beginWord, string endWord, vector<string>& wordList) {
+
+	}
+};
+*/
+
+class Solution908 {
+public:
+	int smallestRangeI(vector<int>& A, int K) {
+		int minVal = INT_MAX;
+		int maxVal = INT_MIN;
+		for (int data : A) {
+			minVal = min(data, minVal);
+			maxVal = max(data, maxVal);
+		}
+		if ((maxVal - minVal) > 2 * K) return (maxVal - minVal - 2 * K);
+		else return 0;
+	}
+};
+class Solution910 {
+public:
+	// 前面的肯定要+K，后面的肯定要-K，如果相对考虑的话就是前面的不变，后面的-2K
+	int smallestRangeII(vector<int>& A, int K) {
+		if (A.size() == 1) {
+			return 0;
+		}
+		sort(A.begin(), A.end());
+		int n = A.size();
+		int ret = INT_MAX;
+		int maxVal = INT_MIN;
+		int minVal = INT_MAX;
+		for (int i = 0; i < n; i++) {
+			maxVal = max(maxVal, A[i]);
+			minVal = min(minVal, A[i]);
+		}
+		ret = maxVal - minVal;
+		for (int i = 0; i < n - 1; i++) {
+			maxVal = max(A[i], A[n - 1] - 2 * K);
+			minVal = min(A[i + 1] - 2 * K, A[0]);
+			ret = min(ret, maxVal - minVal);
+		}
+		return ret;
+	}
+};
+class Solution153 {
+public:
+	//最右边的肯定小于等于最左边的
+	int findMin1(vector<int>& nums) {
+		int i = 0;
+		for (i = 1; i < nums.size(); i++) {
+			if (nums[i - 1] > nums[i]) {
+				break;
+			}
+		}
+		if (i != nums.size())	return nums[i];
+		else return nums[0];
+	}
+	//找坑
+	int findMin(vector<int>& nums) {
+		int left = 0;
+		int right = nums.size() - 1;
+		int mid = 0;
+		while (left < right) {
+			mid = (left + right) / 2;
+			if (nums[mid] >= nums[left]) {
+				//左边升
+				if (mid + 1 <= right && nums[mid] > nums[mid + 1]) {
+					return nums[mid + 1];
+				}
+				else {
+					left = mid + 1;
+				}
+			}
+			else if (nums[mid] < nums[right])
+			{
+				//右边升
+				if (mid - 1 >= left && nums[mid - 1] > nums[mid]) {
+					return nums[mid];
+				}
+				else {
+					right = mid - 1;
+				}
+			}
+			else {
+				//两边等
+				left++;
+			}
+
+		}
+		return nums[0];
 	}
 };
