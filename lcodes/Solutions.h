@@ -6,6 +6,7 @@
 #include <stack> 
 #include <map>
 #include <queue>
+#include <unordered_set>
 using namespace std;
 //19. 删除链表的倒数第N个节点
 struct ListNode
@@ -56,6 +57,24 @@ void printVector2(vector<vector<int>> dp);
 //68 Solution
 string pushnum(vector<string>& words, int start, int end, int maxWidth, int len, bool isEnd);
 
+
+// Definition for a Node.
+class Node {
+public:
+    int val;
+    vector<Node*> children;
+
+    Node() {}
+
+    Node(int _val) {
+        val = _val;
+    }
+
+    Node(int _val, vector<Node*> _children) {
+        val = _val;
+        children = _children;
+    }
+};
 
 
 
@@ -1217,5 +1236,1396 @@ public:
 
 		}
 		return nums[0];
+	}
+};
+/********************开学刷专题************************/
+/*
+思路：二分查找
+    边界条件练习
+*/
+class Solution35 {
+public:
+    //如果我认为target在[left,right]里，那么我的判断条件应该定为left<=right，如果出了我的判断，那么只可能会是 right在left的左边,这时候最佳的插入位置为left或者right+1;
+    int searchInsert1(vector<int>& nums, int target) {
+        int left = 0;
+        int right = nums.size() - 1;
+        int mid = 0;
+        while (left <= right)
+        {
+            mid = (left + right) / 2;
+            if (target < nums[mid]) {
+                right = mid - 1;
+            }
+            else if (target > nums[mid]) {
+                left = mid + 1;
+            }
+            else{
+                return mid;
+            }
+        }
+        return right + 1;
+    }
+	//同理如果我认为target在[left,right)里,那么判断条件应该为left<right,这样的话如果出了我的判断结束条件，只可能会是left=right，这时候最佳的插入位置为left或者right都可以
+	int searchInsert2(vector<int>& nums, int target) {
+		int left = 0;
+		int right = nums.size();
+		int mid = 0;
+        while (left < right) {
+            mid = (left + right) / 2;
+            if (target < nums[mid]) {
+                right = mid;
+            }
+            else if (target > nums[mid]) {
+                left = mid + 1;
+            }
+            else {
+                return mid;
+            }
+        }
+        return right;
+	}
+
+};
+
+class Solution206 {
+public:
+	ListNode* reverseList(ListNode* head) {
+		if (head == NULL) {
+			return head;
+		}
+		ListNode* pre = NULL;
+		ListNode* cur = head;
+		ListNode* later = head->next;
+		while (cur != NULL) {
+			later = cur->next;
+			cur->next = pre;
+			pre = cur;
+			cur = later;
+		}
+		return pre;
+	}
+};
+class Solution209 {
+public:
+	int minSubArrayLen(int target, vector<int>& nums) {
+        int left = 0;
+        int right = -1;
+        int sum = 0;
+        int len = INT_MAX;
+        int n = nums.size();
+        
+        while (right < n && left < n) {
+            if (sum < target) {
+				right++;
+                if (right < n)	sum += nums[right];
+			}
+			else {
+                len = min(len, right - left + 1);
+				sum -= nums[left];
+				left++;
+			}
+        }
+        return len == INT_MAX ? 0:len;
+	}
+};
+/*
+class Solution59 {
+public:
+	vector<vector<int>> generateMatrix(int n) {
+	vector<vector<int>> result(n,vector<int>(n));
+	int left = 0, right = n - 1, up = 0, down = n - 1;
+	enum {RIGHT=0,DOWN,LEFT,UP};
+	int state = RIGHT;
+	int index = 1;
+	while (left <= right && up <= down) {
+		switch (state % 4) {
+		case RIGHT:
+			for (int i = up, j = left; j <= right; j++) {
+				result[i][j] = index++;
+			}
+			up++;
+			break;
+		case DOWN:
+			for (int i = up, j = right; i <= down; i++) {
+				result[i][j] = index++;
+			}
+			right--;
+			break;
+		case LEFT:
+			for (int i = down, j = right; j >= left; j--) {
+				result[i][j] = index++;
+			}
+			down--;
+			break;
+		case UP:
+			for (int i = down, j = left; i >= up; i--){
+				result[i][j] = index++;
+			}
+			left++;
+			break;
+		}
+		state++;
+	}
+	return result;
+	}
+};
+*/
+class Solution59 {
+public:
+	vector<vector<int>> generateMatrix(int n) {
+        vector<vector<int>> matrix(n, vector<int>(n));
+        int x = 0;//横向
+        int y = 0;//纵向
+        int len = n - 1;
+        int num = 1;
+
+        for (int cir = 0; cir < (n + 1) / 2; cir++) {//层数            
+			for (int dir = 0; dir < 4; dir++) {//方向
+				for (int i = 0; i < len; i++) {
+                    matrix[x][y++] = num++;
+				}
+                for (int i = 0; i < len; i++) {
+                    matrix[x++][y] = num++;
+                }
+				for (int i = 0; i < len; i++) {
+					matrix[x][y--] = num++;
+				}
+				for (int i = 0; i < len; i++) {
+					matrix[x--][y] = num++;
+				}
+                len -= 2;
+			}
+        }
+        return matrix;
+	}
+};
+//链表
+class Solution203 {
+public:
+	ListNode* removeElements(ListNode* head, int val) {
+        ListNode* preHead = new ListNode(0,head);
+        ListNode* p = preHead;
+        while (p->next != NULL) {
+            if (p->next->val == val) {
+                ListNode* temp = p->next;
+                p->next = temp->next;
+                delete temp;
+            }
+        }
+        ListNode*  ret = preHead->next;
+        delete preHead;
+        return ret;
+	}
+};
+//Solution707
+class MyLinkedList {
+public:
+    struct LinkedNode {
+        int val;
+        LinkedNode* next;
+        LinkedNode(int val):val(val), next(nullptr){}
+    };
+    /** Initialize your data structure here. */
+    MyLinkedList() {
+        preHead = new LinkedNode(0);
+        m_size = 0;
+    }
+
+    /** Get the value of the index-th node in the linked list. If the index is invalid, return -1. */
+    int get(int index) {
+        LinkedNode* cur = preHead;
+        if (index<0 || index>=m_size) {
+            return -1;
+        }
+        while (index--)
+        {
+            cur = cur->next;
+        }
+        return cur->next->val;
+
+    }
+
+    /** Add a node of value val before the first element of the linked list. After the insertion, the new node will be the first node of the linked list. */
+    void addAtHead(int val) {
+        m_size++;
+        LinkedNode* temp = preHead->next;
+        preHead->next = new LinkedNode(val);
+        preHead->next->next = temp;
+
+    }
+
+    /** Append a node of value val to the last element of the linked list. */
+    void addAtTail(int val) {
+        m_size++;
+        LinkedNode* node = new LinkedNode(val);
+        LinkedNode* cur = preHead;
+        while (cur->next != NULL)
+        {
+            cur = cur->next;
+        }
+        cur->next = node;
+    }
+
+    /** Add a node of value val before the index-th node in the linked list. If index equals to the length of linked list, the node will be appended to the end of linked list. If index is greater than the length, the node will not be inserted. */
+    void addAtIndex(int index, int val) {
+        if (index > m_size) {
+            return;
+        }
+        else if (index == m_size) {
+            addAtTail(val);
+        }
+        else if (index <= 0) {
+            addAtHead(val);
+        }
+        else{
+            LinkedNode* cur = preHead;
+            while (index--) {
+                cur = cur->next;
+            }
+            LinkedNode* temp = cur->next;
+            LinkedNode* newNode = new LinkedNode(val);
+            cur->next = newNode;
+            newNode->next = temp;
+            m_size++;
+        }
+       
+    }
+
+    /** Delete the index-th node in the linked list, if the index is valid. */
+    void deleteAtIndex(int index) {
+        if (index < 0 || index >= m_size) {
+            return;
+        }
+        LinkedNode* cur = preHead;
+        while (index--) {
+            cur = cur->next;
+        }
+        LinkedNode* delNode = cur->next;
+        cur->next = delNode->next;
+        delete delNode;
+        m_size--;
+    }
+    void printList() {
+        LinkedNode* cur = preHead->next;
+        cout << m_size << endl;
+        while (cur!=NULL)
+        {
+            cout << cur->val << "\t";
+            cur = cur->next;
+        }
+
+    }
+
+private:
+    LinkedNode* preHead;
+    int m_size;
+};
+
+/**
+ * Your MyLinkedList object will be instantiated and called as such:
+ * MyLinkedList* obj = new MyLinkedList();
+ * int param_1 = obj->get(index);
+ * obj->addAtHead(val);
+ * obj->addAtTail(val);
+ * obj->addAtIndex(index,val);
+ * obj->deleteAtIndex(index);
+ */
+class Solution142 {
+public:
+	ListNode* detectCycle(ListNode* head) {
+        ListNode* fast = head;
+        ListNode* slow = head;
+
+        while (fast != NULL && fast->next != NULL) {
+            fast = fast->next->next;
+            slow = slow->next;
+            if (fast == slow) {
+                ListNode* index1 = head;
+                ListNode* index2 = slow;
+                while (index1 != index2) {
+                    index1 = index1->next;
+                    index2 = index2->next;
+                }
+                return index1;
+            }
+        }
+        return NULL;
+	}
+};
+
+//map操作
+class Solution242 {
+public:
+	bool isAnagram(string s, string t) {
+        if (s.size() != t.size()) {
+            return false;
+        }
+
+        unordered_map<char, int> smap;
+        for (char c : s) {
+            smap[c]++;
+        }
+        for (char c : t) {
+            if (smap.find(c) == smap.end()||smap[c]==0) {
+                return false;
+            }
+            else {
+                smap[c]--;
+            }
+        }
+        return true;
+	}
+};
+
+class Solution1 {
+public:
+	vector<int> twoSum(vector<int>& nums, int target) {
+        unordered_map<int, int> mmap;
+        for (int i = 0; i < nums.size(); i++) {
+            auto iter = mmap.find(target - nums[i]);
+            if (iter != mmap.end()) {
+                return { iter->second,i };
+            }
+            mmap.insert({ nums[i],i });
+        }
+        return {};
+	}
+};
+//set操作
+class Solution349 {
+public:
+	vector<int> intersection(vector<int>& nums1, vector<int>& nums2) {
+        unordered_set<int> result_set;
+        unordered_set<int> nums_set(nums1.begin(), nums1.end());
+        for (int i : nums2) {
+            if (nums_set.find(i) != nums_set.end()) {
+                result_set.insert(i);
+            }
+        }
+        return vector<int>(result_set.begin(), result_set.end());
+	}
+};
+
+class Solution202 {
+public:
+    int getnum(int num) {
+        int sum = 0;
+        while (num != 0) {
+            sum += (num % 10) * (num % 10);
+            num /= 10;
+        }
+        return sum;
+    }
+
+	bool isHappy(int n) {
+        unordered_set<int> num_set;
+        num_set.insert(n);
+        while (true) {
+            n = getnum(n);
+            if (n == 1) {
+                return true;
+            }
+            if (num_set.find(n) != num_set.end()) {
+                return false;
+            }
+            num_set.insert(n);
+        }
+	}
+};
+
+class Solution454 {
+public:
+	int fourSumCount(vector<int>& A, vector<int>& B, vector<int>& C, vector<int>& D) {
+        unordered_map<int,int> num_map;
+        int cnt = 0;
+        for (int i = 0; i < A.size(); i++) {
+            for (int j = 0; j < B.size(); j++) {
+                num_map[A[i] + B[j]]++;
+            }
+        }
+        for (int i = 0; i < C.size(); i++) {
+            for (int j = 0; j < D.size(); j++) {
+                if (num_map.find(-(C[i] + D[j]))!= num_map.end()) {
+                    cnt += num_map[-(C[i] + D[j])];
+                }
+            }
+        }
+        return cnt;
+	}
+};
+
+class Solution383 {
+public:
+    //哈希方法，
+	bool canConstruct1(string ransomNote, string magazine) {
+        unordered_map<char, int> mag_map;
+        for (char c : magazine) {
+            mag_map[c]++;
+        }
+        for (char c : ransomNote) {
+            if (mag_map.find(c) != mag_map.end()) {
+                if (mag_map[c] != 0) {
+                    mag_map[c]--;
+                }
+                else {
+                    return false;
+                }
+            }
+            else {
+                return false;
+            }
+        }
+        return true;;
+
+	}
+    //数组方法，哈希需要计算哈希函数占用额外空间，因此用数组
+	bool canConstruct(string ransomNote, string magazine) {
+        vector<int> record(26, 0);        
+        for (char c : magazine) {
+            record[c - 'a']++;
+        }
+        for (char c : ransomNote) {
+            if (record[c - 'a'] == 0) {
+                return false;
+            }
+            else {
+                record[c - 'a']--;
+            }
+        }
+        return true;
+	}
+};
+
+class Solution15 {
+public:
+    //去重非常繁琐,尝试失败了
+    /*
+	vector<vector<int>> threeSum1(vector<int>& nums) {
+        unordered_map<int, int> num_map;
+        vector<vector<int>> result;
+        for (int i : nums) {
+            num_map[i]++;
+        }
+        for (auto it = num_map.begin(); it != num_map.end(); it++) {
+            //拿出一个数
+            it->second--;
+            for (auto iit = it; iit != num_map.end(); iit++) {
+                if (iit->second > 0) {
+                    //拿出第二个数
+                    iit->second--;
+                    //找第三个数 
+                    int num1 = it->first;
+                    int num2 = iit->first;
+                    auto num3_iter = num_map.find(-(num1 + num2));
+                    if (num3_iter != num_map.end() && num3_iter->second > 0) {
+                        result.push_back({ num1,num2,num3_iter->first });
+                    }
+                    //还回第二个数
+                    iit->second++;
+                }
+            }
+            //放回
+            it->second++;
+        }
+        return result;
+	}
+    */
+	vector<vector<int>> threeSum(vector<int>& nums) {
+		if (nums.empty()) {
+			return {};
+		}
+        sort(nums.begin(), nums.end());
+        int left = 0;
+        int right = nums.size() - 1;
+		vector<vector<int>> result;
+        for (int i = 0; i < nums.size() - 2; i++) {
+			left = i + 1;
+			right = nums.size() - 1;
+			if ((nums[i] > 0 && nums[right] > 0)
+				|| (nums[i] < 0 && nums[right] < 0)
+				)
+			{
+				return result;
+			}
+            if (i > 0 && nums[i] == nums[i - 1]) {
+                continue;
+            }
+
+            while (left < right) {
+                if (nums[i] + nums[left] + nums[right] > 0) {
+                    right--;
+                }
+                else if (nums[i] + nums[left] + nums[right] < 0) {
+                    left++;
+				}else {
+					result.push_back({ nums[i],nums[left],nums[right] });
+                    while (left < right && nums[left] == nums[left + 1]) left++;
+                    while (left < right && nums[right] == nums[right - 1])right--;
+                    left++;
+                    right--;
+				}
+            }
+
+		}
+        return result;
+	}
+
+};
+class Solution344 {
+public:
+	void reverseString(vector<char>& s) {
+        int n = s.size();
+        for (int i = 0; i < n / 2; i++) {
+            swap(s[i], s[n - 1 - i]);
+        }
+	}
+};
+
+class Solution541 {
+public:
+	string reverseStr1(string s, int k) {
+        int n = s.size();
+        int start = 0;
+        for (int i = 0; i < n / (2 * k); i++) {
+            start = i * (2 * k);
+			for (int j = 0; j < k / 2; j++) {
+                swap(s[start + j], s[start + k - 1 - j]);
+			}
+        }
+        int last_len = n % (2 * k);
+        start = (n / (2 * k)) * 2 * k;
+        if (last_len >= k) {
+			for (int j = 0; j < k / 2; j++) {
+				swap(s[start + j], s[start + k - 1 - j]);
+			}
+        }
+        else {
+			for (int j = 0; j < last_len / 2; j++) {
+                swap(s[start + j], s[start + last_len - 1 - j]);
+			}
+        }
+        return s;
+
+	}
+	string reverseStr(string s, int k) {
+        int n = s.size();
+        for (int i = 0; i < s.size(); i += 2 * k) {
+            if (i + k <= s.size() - 1) {
+                reverse(s.begin() + i, s.begin() + i + k);
+            }
+            else {
+                reverse(s.begin() + i, s.end());
+            }
+        }
+        return s;
+	}
+};
+class Solution151 {
+public:
+	string reverseWords(string s) {
+        //去除后面的空格和前面的空格
+		while (s.back() == ' ') {
+			s.erase(s.end() - 1);
+		}
+		while (s[0] == ' ') {
+			s.erase(s.begin());
+		}
+		for (int i = 0; i < s.size(); i++) {
+			//清除掉多余的空格
+			if (s[i] == ' ') {
+				while (i + 1 < s.size() && s[i + 1] == ' ') {
+					s.erase(s.begin() + i + 1);
+				}
+			}
+		}
+        reverse(s.begin(), s.end());
+        int lastSpace = -1;
+        for (int i = 0; i < s.size(); i++) {
+            if (s[i] == ' ') {
+                reverse(s.begin() + lastSpace + 1, s.begin() + i);
+                lastSpace = i;
+            }
+        }
+        reverse(s.begin() + lastSpace + 1, s.end());
+        return s;
+	}
+
+};
+
+class Solution27 {
+public:
+	int removeElement(vector<int>& nums, int val) {
+        int start = 0;
+        for (start = 0; start < nums.size(); start++) {
+            if (nums[start] == val) {
+                break;
+            }
+        }
+        int slowIndex = start;
+        for (int fastIndex = start; fastIndex < nums.size(); fastIndex++) {
+            if (nums[fastIndex] != val) {
+                nums[slowIndex++] = nums[fastIndex];
+            }
+        }
+        return slowIndex;
+	}
+};
+
+//232solution
+//个人理解成两个对着屁股的口就挺好理解 [  ]这种，塞进去的话往左边塞，弹出的话先都弄到右边来，然后从右边口出就可以
+class MyQueue {
+public:
+    /** Initialize your data structure here. */
+	stack<int> stIn;
+	stack<int> stOut;
+    MyQueue() {
+
+    }
+
+    /** Push element x to the back of queue. */
+    void push(int x) {
+        stIn.push(x);
+    }
+
+    /** Removes the element from in front of queue and returns that element. */
+    int pop() {
+        if (stOut.empty()) {
+            while (!stIn.empty()) {
+                stOut.push(stIn.top());
+                stIn.pop();
+            }
+        }
+        if (!stOut.empty()) {
+            int ret = stOut.top();
+            stOut.pop();
+            return ret;
+        }
+        else {
+            return -1;
+        }
+    }
+
+    /** Get the front element. */
+    int peek() {
+        int ret = pop();
+        stOut.push(ret);
+        return ret;
+    }
+
+    /** Returns whether the queue is empty. */
+    bool empty() {
+        return stIn.empty() && stOut.empty();
+    }
+};
+
+/**
+ * Your MyQueue object will be instantiated and called as such:
+ * MyQueue* obj = new MyQueue();
+ * obj->push(x);
+ * int param_2 = obj->pop();
+ * int param_3 = obj->peek();
+ * bool param_4 = obj->empty();
+ */
+//Solution225
+class MyStack {
+public:
+	queue<int> q1;
+	queue<int> q2; // 辅助队列，用来备份
+    /** Initialize your data structure here. */
+    MyStack() {
+        
+    }
+
+    /** Push element x onto stack. */
+    void push(int x) {
+        if (q1.empty()) {
+            q2.push(x);
+        }
+        else {
+            q1.push(x);
+        }
+    }
+
+    /** Removes the element on top of the stack and returns that element. */
+    int pop() {
+        int ret = -1;
+        if (q1.empty()) {
+            while (q2.size()>1)
+            {
+                q1.push(q2.front());
+                q2.pop();
+            }
+            ret = q2.front();
+            q2.pop();
+        }
+        else {
+			while (q1.size() > 1)
+			{
+				q2.push(q1.front());
+				q1.pop();
+			}
+			ret = q1.front();
+			q1.pop();
+        }
+        return ret;
+    }
+
+    /** Get the top element. */
+    int top() {
+        int ret = pop();
+        push(ret);
+        return ret;
+    }
+
+    /** Returns whether the stack is empty. */
+    bool empty() {
+        return q1.empty() && q2.empty();
+    }
+};
+
+/**
+ * Your MyStack object will be instantiated and called as such:
+ * MyStack* obj = new MyStack();
+ * obj->push(x);
+ * int param_2 = obj->pop();
+ * int param_3 = obj->top();
+ * bool param_4 = obj->empty();
+ */
+
+class Solution20 {
+public:
+	bool isValid(string s) {
+        stack<char> st;
+        unordered_map<char, char> m_map =
+        {
+            {'{','}'},
+            {'(',')'},
+            {'[',']'}
+        };
+
+        for (char c : s) {
+            if (c == '(' || c == '{' || c == '[') {
+                st.push(m_map[c]);
+            }
+            else {
+                if (st.empty() || st.top() != c) return false;
+                st.pop();
+            }
+        }
+        if (st.empty())  return true;
+        else return false;
+	}
+};
+class Solution1047 {
+public:
+	string removeDuplicates(string S) {
+        stack<char> st;
+        for (char c : S) {
+            if (st.empty() || st.top() != c) {
+                st.push(c);
+            }
+            else {
+                st.pop();
+            }
+        }
+        string result = "";
+        while (!st.empty()) {
+            result += st.top();
+            st.pop();
+        }
+        reverse(result.begin(), result.end());
+        return result;
+
+	}
+};
+class Solution150 {
+public:
+	int evalRPN(vector<string>& tokens) {
+        stack<int> num_st;
+        for (string s : tokens) {
+            if (s == "+" || s == "-" || s == "*" || s == "/") {
+                int num2 = num_st.top();
+                num_st.pop();
+                int num1 = num_st.top();
+                num_st.pop();
+                int new_num;
+                if (s == "+") new_num = num1 + num2;
+                else if(s=="-") new_num = num1 - num2;
+                else if (s == "*") new_num = num1 * num2;
+                else if (s == "/") new_num = num1 / num2;
+                num_st.push(new_num);
+            }
+            else {
+                num_st.push(stoi(s));
+            }
+        }
+        return num_st.top();
+
+	}
+};
+
+class Solution239 {
+public:
+    //要点：新的大数的到来可以直接影响到前面的小数，让他们的离开变得无关紧要。毕竟窗口里面已经有了比他们大的数。
+    class MyQueue {
+    public: deque<int> que;
+          //新的数进来,会使得比它小的数变得无关紧要，因为比它小的在它的前面比它先走，所以不可能是这个队列里的最大值了
+          void push(int val) {
+              while (!que.empty() && que.back() < val) {
+                  que.pop_back();
+              }
+              que.push_back(val);
+          }
+          //左边窗口滑出新的数据
+          //走的时候只有两种情况，要么是最大值，要么不是最大值。
+          //如果是最大值的话，那应该弹出里面最大的，如果不是最大值的话，那后面的最大值肯定会早就把他弹出去了，因此他对最终的滑动窗口的最大值是没有影响的。所以不用管就可以。
+          void pop(int val) {
+              if (!que.empty() && que.front() == val) {
+                  que.pop_front();
+              }
+          }
+          int front() {
+              return que.front();
+          }
+
+    };
+
+
+	vector<int> maxSlidingWindow(vector<int>& nums, int k) {
+        vector<int> result(nums.size() - k + 1);
+        MyQueue mq;
+        for (int i = 0; i < k; i++) {
+            mq.push(nums[i]);
+        }
+        result[0] = mq.front();
+        for (int i = k; i < nums.size(); i++) {
+            mq.pop(nums[i - k]);
+            mq.push(nums[i]);
+            result[i - k + 1] = mq.front();
+        }
+        return result;
+	}
+};
+
+//优先级队列
+class Solution347 {
+public:
+	class myCompare {
+    public:
+		//第一个操作数我理解为子节点，第二个为父亲节点
+		bool operator()(pair<int, int> lhs, pair<int, int> rhs) {
+			return lhs.second > rhs.second;
+		}
+	};
+	vector<int> topKFrequent(vector<int>& nums, int k) {
+        unordered_map<int, int> numsMap;
+        for (int i : nums) {
+            numsMap[i]++;
+        }
+
+        priority_queue<pair<int, int>, vector<pair<int, int>>, myCompare> pri_que;
+        for (auto it = numsMap.begin(); it != numsMap.end(); it++) {
+            pri_que.push(*it);
+            if (pri_que.size() > k) {
+                pri_que.pop();
+            }
+        }
+        vector<int> result(k);
+        for (int i = k - 1; i >= 0; i--) {
+            result[i] = pri_que.top().first;
+            pri_que.pop();
+        }
+        return result;
+	}
+};
+
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
+//先序遍历
+class Solution144 {
+public:
+    void preOrder(TreeNode* root, vector<int>& result) 
+    {
+        if (root == NULL) {
+            return;
+        }
+        result.push_back(root->val);
+        preOrder(root->left, result);
+        preOrder(root->right, result);
+    }
+    //递归写法
+    vector<int> preorderTraversal1(TreeNode* root) 
+    {
+        vector<int> result;
+        preOrder(root, result);
+        return result;
+    }
+    //栈写法
+	vector<int> preorderTraversal(TreeNode* root)
+	{
+        stack<TreeNode*> stk;
+        vector<int> result;
+        if(root!=NULL) stk.push(root);
+        while (!stk.empty()) {
+            TreeNode* node = stk.top();
+            stk.pop();            
+			if (node != NULL) {
+                result.push_back(node->val);//中
+				stk.push(node->right);//右
+				stk.push(node->left);//左
+            }
+        }
+        return result;
+	}
+
+};
+//145,给定一个二叉树，返回它的 后序 遍历。
+class Solution145 {
+public:
+    void postOrder(TreeNode* root, vector<int>& result) {
+        if (root == NULL) {
+            return;
+        }
+        postOrder(root->left, result);
+        postOrder(root->right, result);
+        result.push_back(root->val);
+    }
+    //递归写法
+	vector<int> postorderTraversal1(TreeNode* root) {
+		vector<int> result;
+        postOrder(root, result);
+		return result;
+	}
+	//栈写法
+	vector<int> postorderTraversal(TreeNode* root) {
+		stack<TreeNode*> stk;
+		if (root) stk.push(root);
+		vector<int> result;
+		while (!stk.empty()) {
+			TreeNode* node = stk.top();
+			stk.pop();
+			if (node != NULL) {
+				if (node->right) stk.push(node->right);
+				if (node->left) stk.push(node->left);
+				stk.push(node);
+				stk.push(NULL);
+			}
+			else {
+				TreeNode* node = stk.top();
+				stk.pop();
+				result.push_back(node->val);
+			}
+		}
+		return result;
+	}
+
+};
+//94. 二叉树的中序遍历
+class Solution94 {
+public:
+    void inOrder(TreeNode* root,vector<int>& result) {
+        if (root == NULL) {
+            return;
+        }
+        inOrder(root->left, result);
+        result.push_back(root->val);
+        inOrder(root->right, result);
+    }
+	vector<int> inorderTraversal1(TreeNode* root) {
+		vector<int> result;
+        inOrder(root, result);
+		return result;
+	}
+    //栈写法
+	vector<int> inorderTraversal(TreeNode* root) {
+        stack<TreeNode*> stk;
+        if (root) stk.push(root);
+        vector<int> result;
+        while (!stk.empty()) {
+            TreeNode* node = stk.top();
+            stk.pop();
+            if (node != NULL) {
+                if (node->right) stk.push(node->right);
+                stk.push(node);
+                stk.push(NULL);
+                if (node->left) stk.push(node->left);
+            }
+            else{
+                TreeNode* node= stk.top();
+                stk.pop();
+                result.push_back(node->val);
+            }
+        }
+        return result;
+	}
+};
+
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
+class Solution {
+public:
+    vector<vector<int>> levelOrder(TreeNode* root) {
+        queue<TreeNode*> que;
+        if (root != NULL) que.push(root);
+        vector<vector<int>> result;
+        while (!que.empty())
+        {
+            int size = que.size();
+            vector<int> vec;
+            for (int i = 0; i < size; i++) {
+                TreeNode* node=que.front();
+                que.pop();
+                vec.push_back(node->val);
+                if (node->left) que.push(node->left);
+                if (node->right) que.push(node->right);
+            }
+            result.push_back(vec);
+        }
+        return result;
+    }
+};
+
+class Solution107 {
+public:
+	vector<vector<int>> levelOrderBottom(TreeNode* root) {
+        queue<TreeNode*> que;
+        vector<vector<int>> result;
+        if (root != NULL) que.push(root);
+        while (!que.empty())
+        {
+            int size = que.size();
+            vector<int> vec;
+            for (int i = 0; i < size; i++) {
+                TreeNode* node = que.front();
+                que.pop();
+                vec.push_back(node->val);
+                if (node->left) que.push(node->left);
+                if (node->right) que.push(node->right);
+            }
+            result.push_back(vec);
+        }
+        reverse(result.begin(), result.end());
+        return result;
+	}
+};
+
+class Solution199 {
+public:
+	vector<int> rightSideView(TreeNode* root) {
+        queue<TreeNode*> que;
+        vector<int> result;
+        if (root != NULL) que.push(root);
+        while (!que.empty()) {
+            int size= que.size();
+            int num = 0;
+            TreeNode* node;
+            for (int i = 0; i < size; i++) {
+                node = que.front();
+				que.pop();                
+                if(node->left) que.push(node->left);
+                if(node->right) que.push(node->right);
+            }
+            result.push_back(node->val);
+        }
+        return result;
+	}
+};
+
+class Solution637 {
+public:
+	vector<double> averageOfLevels(TreeNode* root) {
+        queue<TreeNode*> que;
+        vector<double> result;
+        if(root!=NULL) que.push(root);
+        while (!que.empty()) {
+            int size = que.size();
+            double ave = 0;
+            for (int i = 0; i < size; i++) {
+                TreeNode* node = que.front();
+                que.pop();
+                ave += node->val;
+                if(node->left) que.push(node->left);
+                if(node->right) que.push(node->right);
+            }
+            ave /= size;
+            result.push_back(ave);
+        }
+        return result;
+
+	}
+};
+
+
+
+class Solution {
+public:
+    // Definition for a Node.
+	class Node {
+	public:
+		int val;
+		vector<Node*> children;
+
+		Node() {}
+
+		Node(int _val) {
+			val = _val;
+		}
+
+		Node(int _val, vector<Node*> _children) {
+			val = _val;
+			children = _children;
+		}
+	};
+
+    vector<vector<int>> levelOrder(Node* root) 
+    {
+        queue<Node*> que;
+        vector<vector<int>> result;
+        if (root != NULL) que.push(root);
+        while (!que.empty()) 
+        {
+            int size = que.size();
+            vector<int> vec;
+            for (int i = 0; i < size; i++) 
+            {
+				Node* node = que.front();
+				que.pop();
+                vec.push_back(node->val);
+                for (int i = 0; i < node->children.size(); i++) 
+                {
+                    if (node->children[i]) que.push(node->children[i]);
+                }
+            }
+            result.push_back(vec);
+        }
+        return result;
+
+    }
+};
+
+class Solution226 {
+public:
+    //前序遍历
+	TreeNode* invertTree(TreeNode* root) {
+        if (root == NULL) return root;
+        swap(root->left, root->right);
+        invertTree(root->left);
+        invertTree(root->right);
+        return root;
+	}
+};
+
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
+class Solution101 {
+public:
+    //使用递归方法
+    bool isSymmetric1(TreeNode* root) {
+        if (root == NULL) {
+            return true;
+        }
+        return compare(root->left, root->right);
+
+    }
+    //比较左右子树内外是不是相同，相同就继续比较下一层，直到到了null
+    //1.确定参数和返回值
+    //2.确定终止条件，,就是不管怎么操作，你总会到了这一层
+    //3.确定每一层的逻辑
+    bool compare(TreeNode* left, TreeNode* right) {
+        //终止条件
+        if (left == NULL && right == NULL)  return true;
+        else if (left == NULL || right == NULL) return false;
+        else if (left->val != right->val) return false;
+        //左右相等且不为空的情况
+        //接着比较下一层了       
+        return compare(left->left, right->right) && compare(left->right, right->left);
+    }
+    //使用迭代法
+	bool isSymmetric(TreeNode* root) {
+		if (root == NULL) {
+			return true;
+		}
+        queue<TreeNode*> que;
+        que.push(root->left);
+        que.push(root->right);
+        while (!que.empty())
+        {
+            TreeNode* lnode = que.front();
+            que.pop();
+            TreeNode* rnode = que.front();
+            que.pop();
+            //将要比较的节点按顺序依次放进去,一个比较机一样
+            if(lnode==NULL&&rnode==NULL) continue;
+            else if (lnode == NULL || rnode == NULL) {
+                return false;
+            }
+            else if (lnode->val != rnode->val) {
+                return false;
+            }
+            else{
+                que.push(lnode->left);
+                que.push(rnode->right);
+                que.push(lnode->right);
+                que.push(rnode->left);
+            }
+
+        }
+        return true;
+	}
+
+};
+
+class Solution104 {
+public:
+    int maxDepth(TreeNode* root) {
+        if (root == NULL) {
+            return 0;
+        }
+        return max(maxDepth(root->left), maxDepth(root->right)) + 1;
+    }
+    //迭代法
+	int maxDepth(TreeNode* root) {
+        queue<TreeNode*> que;
+        int depth = 0;
+        if(root!=NULL) que.push(root);
+        while (!que.empty()) {
+            int size = que.size();
+            for (int i = 0; i < size; i++) {
+				TreeNode* node = que.front();
+				que.pop();
+                if (node->left) que.push(node->left);
+                if (node->right) que.push(node->right);
+            }
+            depth++;
+        }
+        return depth;
+	}
+
+};
+
+
+class Solution559 {
+public:
+    //递归法
+    int maxDepth(Node* root) {
+        if (root == NULL) {
+            return 0;
+        }
+        int depth = 0;
+        for (int i = 0; i < root->children.size(); i++) {
+            depth = max(maxDepth(root->children[i]), depth);
+        }
+        return depth + 1;
+    }
+
+
+    //迭代法
+    int maxDepth2(Node* root) {
+        queue<Node*> que;
+        int depth = 0;
+        if(root) que.push(root);
+        while (!que.empty()) {
+            int size = que.size();
+            for (int i = 0; i < size; i++) {
+				Node* node = que.front();
+				que.pop();
+                if (node != NULL) {
+                    for (int i = 0; i < node->children.size(); i++) {
+                        que.push(node->children[i]);
+                    }
+                }
+            }
+            depth++;
+        }
+        return depth;
+    }
+};
+class Solution111 {
+public:
+    int minDepth(TreeNode* root) {    
+        if (root == NULL) return 0;
+        int leftDepth = minDepth(root->left);
+        int rightDepth = minDepth(root->right);
+		if (root->left == NULL && root->right != NULL) {
+			return rightDepth + 1;
+		}
+		if (root->left != NULL && root->right == NULL) {
+			return leftDepth + 1;
+		}
+        return min(leftDepth, rightDepth) + 1;
+    }
+    //迭代法
+	int minDepth1(TreeNode* root) {
+        queue<TreeNode*> que;
+        if (root != NULL)  que.push(root);
+        int depth = 0;
+        while (!que.empty()) {
+            int size = que.size();  
+            depth++; 
+			for (int i = 0; i < size; i++) {
+				TreeNode* node = que.front();
+				que.pop();
+				if (node->left) que.push(node->left);
+				if (node->right) que.push(node->right);
+                if (node->left==NULL && node->right==NULL) return depth;
+			}           
+        }
+        return depth;
+	}
+};
+
+class Solution222 {
+public:
+    //递归法
+	int countNodes1(TreeNode* root) {
+        if (root == NULL) return 0;
+        int leftNodes = countNodes(root->left);
+        int rightNodes = countNodes(root->right);
+        return leftNodes + rightNodes + 1;
+	}
+    //迭代法
+	int countNodes(TreeNode* root) {
+        queue<TreeNode*> que;
+        int nodeCnt = 0;
+        if (root != NULL) que.push(root);
+        while (!que.empty()) {
+            int size = que.size();
+            nodeCnt+=size;
+            for (int i = 0; i < size; i++) {
+                TreeNode* node = que.front();
+                que.pop();
+                if (node->left) que.push(node->left);
+                if (node->right) que.push(node->right);
+            }
+        }
+        return nodeCnt;
+
 	}
 };
