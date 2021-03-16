@@ -1,11 +1,14 @@
 #include "Solutions.h"
 
 
-int main() 
+int main()
 {
-	Solution239 solution;
-	vector<int> nums = { 6,7,8,9,10,1,2,3,4,5 };
-	solution.maxSlidingWindow(nums, 5);
+
+	Solution134 solution;
+	vector<int> gas = {3,3,4};
+	vector<int> cost = { 3,4, 4 };
+
+	solution.canCompleteCircuit(gas,cost);
 
 	return 0;
 }

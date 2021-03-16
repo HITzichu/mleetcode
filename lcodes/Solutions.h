@@ -710,29 +710,7 @@ public:
 		return preHead->next;
 	}
 };
-class Solution93
-{
-public:
-	vector<string> result;
-	string s;
-	//点 点，从头到尾依次找三个个点
-	void dfs(int start, int IPval, int IPindex)
-	{
-		for (int i = start; i < s.size(); i++) {			
-			char c = s[i];
-			IPval=IPval*10+s[i]-'0';
-			
 
-		}
-	}
-
-	vector<string> restoreIpAddresses(string s)
-	{
-		this->s = s;
-		string cur;
-		return result;
-	}
-};
 //数组专题
 class Solution238 {
 public:
@@ -993,7 +971,7 @@ public:
 class Solution106 {
 public:
     unordered_map<int, int> map;
-    TreeNode* buildTree(vector<int>& inorder, vector<int>& postorder) {
+    TreeNode* buildTree1(vector<int>& inorder, vector<int>& postorder) {
         if (inorder.size() != postorder.size()) {
             //错误输入
             return {};
@@ -1018,6 +996,7 @@ public:
         head->right = findHead(iStart + i + 1, iEnd, pStart + i, pEnd - 1, inorder, postorder);
         return head;
     }
+    //规定好循环不变量后尝试，顺序后切割重组
 };
 /*
 输入: 5
@@ -2280,7 +2259,7 @@ public:
  *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
  * };
  */
-class Solution {
+class Solution102 {
 public:
     vector<vector<int>> levelOrder(TreeNode* root) {
         queue<TreeNode*> que;
@@ -2375,7 +2354,7 @@ public:
 
 
 
-class Solution {
+class Solution429 {
 public:
     // Definition for a Node.
 	class Node {
@@ -2511,7 +2490,7 @@ public:
         return max(maxDepth(root->left), maxDepth(root->right)) + 1;
     }
     //迭代法
-	int maxDepth(TreeNode* root) {
+	int maxDepth1(TreeNode* root) {
         queue<TreeNode*> que;
         int depth = 0;
         if(root!=NULL) que.push(root);
@@ -2629,3 +2608,1795 @@ public:
 
 	}
 };
+class Solution110 {
+public:
+    int getdepth(TreeNode* root) {
+        //结束条件
+        if (root == NULL) {
+            return 0;
+        }
+        //内部逻辑
+        int leftDepth = getdepth(root->left);
+        int rightDepth = getdepth(root->right);
+        if (leftDepth == -1 || rightDepth == -1) return -1;
+        if (abs(leftDepth - rightDepth) > 1) return -1;
+        return max(leftDepth, rightDepth) + 1;
+
+    }
+    //递归方法
+	bool isBalanced1(TreeNode* root) {
+        return getdepth(root) == -1 ? false: true;
+	}
+};
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
+class Solution257 {
+public:
+    vector<string> result;
+    void trans2Res(vector<int>& path) {
+        string str;
+        for (int i = 0; i < path.size() - 1; i++) {
+            str = str + to_string(path[i]) + "->";
+        }
+        str += (to_string(path.back()));
+        result.push_back(str);
+    }
+    void traversal(TreeNode* root, vector<int>& path) {
+        //前序遍历
+        path.push_back(root->val);//中        
+        if (root->left == NULL && root->right == NULL) {
+            trans2Res(path);
+            return;
+        }
+        if (root->left) {
+            traversal(root->left, path);//左,如果有的探索那么肯定会往里面加入一个元素，溯回来的时候要将其弹出
+            path.pop_back();
+        }
+        if (root->right) {
+            traversal(root->right, path);//右
+            path.pop_back();
+        }      
+        
+        return;
+    }
+
+    vector<string> binaryTreePaths1
+    (TreeNode* root) {
+		if (root == NULL) {
+			return {};
+		}
+        vector<int> path;
+        traversal(root, path);
+        return result;
+    }
+    /*
+    //非递归方法，尝试失败
+	vector<string> binaryTreePaths(TreeNode* root) {
+        stack<TreeNode*> stk;
+        vector<int> path;
+        if (root) stk.push(root);
+        while (!stk.empty()) {
+            //拿出当前节点
+            TreeNode* node = stk.top();
+            stk.pop();
+            //中
+            path.push_back(node->val);
+            if (node->left == NULL && node->right == NULL) {
+                trans2Res(path);                
+                continue;
+            }
+            //右
+            if (node->right) {
+                stk.push(node->right);
+            }
+            //左
+            if (node->right) {
+                stk.push(node->right);
+            }
+
+
+        }
+	}
+    */
+};
+class Solution100 {
+public:
+	bool isSameTree(TreeNode* p, TreeNode* q) {
+        //终止条件
+        if (p == NULL && q == NULL) {
+            return true;
+        }
+        if (p == NULL || q == NULL) {
+            return false;
+        }
+        //中
+        if (p->val != q->val) {
+            return false;
+        }
+		//左
+        //右
+        return isSameTree(p->left, q->left) && isSameTree(p->right, q->right);       
+
+	}
+};
+class Solution572 {
+public:
+    //比较两个树是不是相同的
+    bool compare2Tree(TreeNode* s, TreeNode* t) {
+        if (s == NULL && t == NULL) {
+            return true;
+        }
+        if (s == NULL || t == NULL) {
+            return false;
+        }
+        if (s->val != t->val) {
+            return false;
+        }
+        return compare2Tree(s->left, t->left) && compare2Tree(s->right, t->right);
+
+    }
+    /*
+    //节点值不相同的话
+	TreeNode* findSubtree(TreeNode* s,int num) {
+		if (s == NULL) {
+            return {};
+		}
+        //中
+        if (s->val == num) {
+            return s;
+        }
+        //左
+		TreeNode* lnode = findSubtree(s->left, num);
+		TreeNode* rnode = findSubtree(s->right, num);
+        return lnode == NULL ? rnode : lnode;
+	}
+    */
+    bool dfs(TreeNode* s, TreeNode* t) {
+        if (s == NULL) {
+            return false;
+        }
+        return compare2Tree(s, t) || dfs(s->left, t) || dfs(s->right, t);;
+    }
+
+	bool isSubtree(TreeNode* s, TreeNode* t) {        
+        return dfs(s, t);;
+	}
+};
+class Solution404 {
+public:
+	int sumOfLeftLeaves1(TreeNode* root) {
+        //终止条件
+        if (root == NULL) {
+            return 0;
+        }
+        //遍历方式：后序遍历,因为是到最后汇总
+        int lsum = sumOfLeftLeaves(root->left);//左
+        int rsum = sumOfLeftLeaves(root->right);//右
+        //中,对于单个节点来说，如果是左叶子点，那么就讲它的值加进去
+        if (root->left != NULL && root->left->left == NULL && root->left->right == NULL) {
+            return lsum + rsum + root->left->val;
+        }
+        return lsum + rsum;
+	}
+    int sumOfLeftLeaves(TreeNode* root) {
+        stack<TreeNode*> stk;
+        if (root) stk.push(root);
+        int sum = 0;
+        while (!stk.empty()) {
+            TreeNode* node = stk.top();
+            stk.pop();
+            if (node != NULL) {
+				//右
+				if (node->right) stk.push(node->right);
+				//左
+				if (node->left) stk.push(node->left);
+                //中
+                stk.push(node);
+                stk.push(NULL);
+            }
+            else {
+				//中
+				TreeNode* node = stk.top();
+				stk.pop();
+				if (node->left != NULL && node->left->left == NULL && node->left->right == NULL) {
+					sum += node->left->val;
+				}
+            }
+        }
+        return sum;
+    }
+};
+class Solution513 {
+public:
+	int findBottomLeftValue(TreeNode* root) {
+        queue<TreeNode*> que;
+        if (root) que.push(root);
+        TreeNode* lastNode;
+        while (!que.empty()) {
+            int size = que.size();
+            lastNode = que.front();
+            for (int i = 0; i < size; i++) {
+				TreeNode* node = que.front();
+				que.pop();
+                if (node->left) que.push(node->left);
+                if (node->right) que.push(node->right);
+            }
+        }
+        return lastNode->val;
+	}
+};
+
+class Solution112 {
+public:
+	bool hasPathSum(TreeNode* root, int targetSum) {
+        //终止条件
+        if (root == NULL) {
+            return false;
+        }
+        if (root != NULL && root->left == NULL && root->right == NULL && root->val == targetSum) {
+            return true;
+        }
+        if (root != NULL && root->left == NULL && root->right == NULL && root->val != targetSum) {
+            return false;
+        }
+        //后序遍历
+        if (hasPathSum(root->left, targetSum - root->val)) {
+            return true;
+        }
+        if (hasPathSum(root->right, targetSum - root->val)) {
+            return true;
+        }
+        //中间节点处理，好像没什么需要处理的，就是汇总一下两边的结果,但是前面都已经返回了
+        return false;
+	}
+    bool hasPathSum1(TreeNode* root, int targetSum) {
+        stack<pair<TreeNode*,int>> stk;
+        if (root) stk.push(make_pair(root,targetSum));
+        while (!stk.empty()) {
+            //拿出个节点
+            pair<TreeNode*, int> cur = stk.top();
+            stk.pop();
+            TreeNode* node = cur.first;
+            int num = cur.second;
+            if (node != NULL) {
+                //中序遍历
+                if (node->right) stk.push(make_pair(node->right,num-node->val));
+                if (node->left) stk.push(make_pair(node->left, num - node->val));
+                stk.push(cur);
+                stk.push(make_pair((TreeNode*)NULL, 0));
+            }
+            else {
+                //再拿出节点
+				pair<TreeNode*, int> cur = stk.top();
+				stk.pop();
+				TreeNode* node = cur.first;
+				int num = cur.second;
+                //是叶子节点
+                if (node->left == NULL && node->right == NULL && node->val == num) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+};
+class Solution113 {
+public:
+    vector<vector<int>> result;
+    void traversal(TreeNode* root, int targetSum,vector<int>& path) {
+        //结束条件
+        if (root == NULL) {
+            return;
+        }        
+        //先序遍历 
+        if (root->left == NULL && root->right == NULL && root->val == targetSum) {
+            result.push_back(path);
+        }
+        if (root->left == NULL && root->right == NULL && root->val != targetSum) {
+            return;
+        }
+		if (root->left) {
+			path.push_back(root->left->val);
+			traversal(root->left, targetSum - root->val, path);
+            path.pop_back();
+		}
+		if (root->right) {
+			path.push_back(root->right->val);
+			traversal(root->right, targetSum - root->val, path);
+            path.pop_back();
+		}
+
+
+    }
+	vector<vector<int>> pathSum(TreeNode* root, int targetSum) {
+        vector<int> path;
+        if (root) path.push_back(root->val);
+        traversal(root, targetSum, path);
+        return result;
+	}
+};
+class Solution654 {
+public:
+    //左闭右闭
+    TreeNode* traversal(vector<int>& nums,int left,int right) {
+        //结束条件 
+        if (left > right) {
+            return NULL;
+        }
+        if (left == right) {
+            return new TreeNode(nums[left]);
+        }
+        //先序遍历
+        //中  ，逻辑处理,找到最大值作为新的root节点返回
+        TreeNode* root=new TreeNode;
+        int maxVal=INT_MIN;
+        int maxValIndex = 0;
+        for (int i = left; i <= right; i++) {
+            if (maxVal < nums[i]) {
+                maxVal = nums[i];
+                maxValIndex = i;
+            }
+        }
+        root->val = maxVal;
+        //左
+        root->left=traversal(nums, left, maxValIndex - 1);
+        //右
+        root->right = traversal(nums, maxValIndex + 1, right);
+        return root;
+    }
+
+
+	TreeNode* constructMaximumBinaryTree(vector<int>& nums) {
+        return traversal(nums, 0, nums.size() - 1);
+	}
+};
+
+class Solution617 {
+public:
+	TreeNode* mergeTrees(TreeNode* root1, TreeNode* root2) {
+        //终止条件
+		if (root1==NULL)  return root2;
+		if (root2==NULL)  return root1;
+        //先序遍历,中       
+        root1->val += root2->val;
+        //左
+        root1->left = mergeTrees(root1->left, root2->left);
+        //右
+        root1->right = mergeTrees(root1->right, root2->right);
+        return root1;
+	}
+	
+};
+
+class Solution700 {
+public:
+	TreeNode* searchBST1(TreeNode* root, int val) {
+        queue<TreeNode*> que;
+        if (root) que.push(root);
+        while (!que.empty()) {
+            int size = que.size();
+            for (int i = 0; i < size; i++) {
+                TreeNode* node = que.front();
+                que.pop();
+                //处理本节点
+                if (node->val == val) return node;
+                if (node->left) que.push(node->left);
+                if (node->right) que.push(node->right);
+            }
+        }
+        return NULL;
+	}
+    TreeNode* searchBST2(TreeNode* root, int val) {
+        if (root == NULL || root->val == val) return root;
+
+        while (root != NULL) {
+			if (root->val == val) return root;
+			else if (root->val < val) root = root->right;
+			else if (root->val > val) root = root->left;
+        }
+        return NULL;
+
+    }
+
+	TreeNode* searchBST(TreeNode* root, int val) {
+		if (root == NULL) {
+			return NULL;
+		}
+		//中
+		if (root->val == val) {
+			return root;
+		}
+		if (root->val < val) return searchBST(root->right, val);
+		if (root->val > val) return searchBST(root->left, val);
+		return NULL;
+	}
+};
+
+class Solution98 {
+public:
+    TreeNode* preNode=NULL;
+
+	bool isValidBST(TreeNode* root) {
+		if (root == NULL) return true;
+		//中序遍历
+		//左
+		bool left_check = true;
+		bool right_check = true;
+		if (root->left) {
+			left_check = isValidBST(root->left);
+		}
+		//中
+		if (preNode != NULL && root->val < preNode->val) return false;
+        preNode = root;
+		//右
+		if (root->right) {
+			right_check = isValidBST(root->right);
+		}
+		return left_check && right_check;
+
+	}
+    //迭代法
+    bool isValidBST2(TreeNode* root) {
+        stack<TreeNode*> stk;
+        if (root) stk.push(root);
+        while (!stk.empty()) {
+            TreeNode* node = stk.top();
+            stk.pop();
+            if (node != NULL) {
+                //右
+                if (node->right) stk.push(node->right);
+                //中
+                stk.push(node);
+                stk.push(NULL);
+                //左
+                if (node->left) stk.push(node->left);
+            }
+            else {
+				TreeNode* node = stk.top();
+				stk.pop();
+                if (preNode != NULL && node->val <= preNode->val) {
+                    return false;
+                }
+                preNode = node;
+            }
+
+        }
+        return true;
+    }
+};
+
+class Solution530 {
+public:
+    TreeNode* preNode = NULL;
+    int minVal=INT_MAX;
+	int getMinimumDifference(TreeNode* root) {
+        //结束条件
+        if (root == NULL) {
+            return -1;
+        }
+
+        //中序遍历
+        getMinimumDifference(root->left);
+        if (preNode != NULL) {
+            minVal = min(minVal, root->val - preNode->val);
+        }
+        preNode = root;
+        getMinimumDifference(root->right);
+        return minVal;
+	}
+
+	int getMinimumDifference1(TreeNode* root) {
+        stack<TreeNode*> stk;
+        if (root) stk.push(root);
+        TreeNode* preNode = NULL;
+        int minVal=INT_MAX;
+        while (!stk.empty()) {
+            TreeNode* node = stk.top();
+            stk.pop();
+            if (node != NULL) {
+                //中序遍历
+                //右
+				if (node->right) {
+					stk.push(node->right);
+				}
+                stk.push(node);
+                stk.push(NULL);
+                //左
+				if (node->left) {
+					stk.push(node->left);
+				}
+            }
+            else {
+				TreeNode* node = stk.top();
+				stk.pop();
+				//中,节点的逻辑处理
+				if (preNode != NULL) {
+					minVal = min(minVal, node->val - preNode->val);
+				}
+				preNode = node;
+            }
+        }
+        return minVal;
+	}
+};
+
+class Solution501 {
+public:
+    TreeNode* preNode = NULL;
+    int maxFre = 1;//历史最大频率
+    int curFre = 1;//当前节点的频率
+    vector<int> result;
+    void traversal(TreeNode* root) {
+        //停止条件
+        if (root == NULL) {
+            return;
+        }
+        //中序遍历
+        traversal(root->left);//左
+        //中
+		if (preNode != NULL) {
+			//从第二个开始看
+			if (preNode->val == root->val) {    //和前面的相同了，连杀继续
+				curFre++;
+			}
+			else {
+				curFre = 1;     //归一
+			}
+		}
+		if (curFre == maxFre) { //前面兄弟的超神故事结束
+			result.push_back(root->val);
+		}
+		else if (curFre > maxFre) {
+			result.clear();
+			result.push_back(root->val);
+            maxFre = curFre;
+		}
+        preNode = root;
+        traversal(root->right);
+
+    }
+
+	vector<int> findMode(TreeNode* root) {
+        traversal(root);
+        return result;
+
+	}
+	vector<int> findMode2(TreeNode* root) {
+        stack<TreeNode*> stk;
+        if (root) stk.push(root);
+		TreeNode* preNode = NULL;
+		int maxFre = 1;//历史最大频率
+		int curFre = 1;//当前节点的频率
+		vector<int> result;
+        while (!stk.empty()) {
+            TreeNode* node = stk.top();
+            stk.pop();
+            if (node != NULL) {
+                //右
+                if (node->right) stk.push(node->right);
+                stk.push(node);
+                stk.push(NULL);
+                if (node->left) stk.push(node->left);
+            }
+            else {
+				TreeNode* node = stk.top();
+				stk.pop();
+				if (preNode != NULL) {
+					//从第二个开始看
+					if (preNode->val == node->val) {    //和前面的相同了，连杀继续
+						curFre++;
+					}
+					else {
+						curFre = 1;     //归一
+					}
+				}
+				if (curFre == maxFre) { //前面兄弟的超神故事结束
+					result.push_back(node->val);
+				}
+				else if (curFre > maxFre) {
+					result.clear();
+					result.push_back(node->val);
+					maxFre = curFre;
+				}
+				preNode = node;
+            }
+
+        }
+        return result;
+
+	}
+};
+
+class Solution236 {
+public:
+    //找到了返回找到的节点，没找到返回NULL
+	TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
+        if (root == NULL || p == NULL || q == NULL) {
+            return NULL;
+        }
+        TreeNode* left = lowestCommonAncestor(root->left, p, q);
+        TreeNode* right = lowestCommonAncestor(root->right, p, q);
+        //中间节点的判断逻辑，拿到左右两边的结果，进行逻辑判断
+        //左右两边汇合处
+        if (left != NULL && right != NULL) {
+            return root;
+        }
+        if (left != NULL && right == NULL) {
+            if (root == p || root == q) return root;
+            else return left;
+        }
+        if (left == NULL && right != NULL) {
+			if (root == p || root == q) return root;
+			else return right;
+        }
+        if (root == p || root == q) return root;
+        else return NULL;
+	}
+};
+
+class Solution235 {
+public:
+	TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
+        //先序遍历
+        //结束条件
+        int minval = min(p->val, q->val);
+        int maxval = max(p->val, q->val);
+        if(root == NULL||(root->val>=minval&&root->val<=maxval)) return root;//中节点逻辑
+        if (root->val > maxval) {
+            TreeNode* left = lowestCommonAncestor(root->left, p, q);
+            if (left != NULL) return left;
+        }
+		TreeNode* right = lowestCommonAncestor(root->right, p, q);
+		return right;
+	}
+
+    TreeNode* lowestCommonAncestor2(TreeNode* root, TreeNode* p, TreeNode* q) {
+        int minval = min(p->val, q->val);
+        int maxval = max(p->val, q->val);
+        while (root) {
+            if (root->val > maxval) {
+                root = root->left;
+            }
+            else if (root->val < minval) {
+                root = root->right;
+            }
+            else {
+                return root;
+            }
+        }
+        return root;
+    }
+};
+class Solution701 {
+public:
+    TreeNode* insertIntoBST(TreeNode* root, int val) {
+        //后序遍历
+
+    }
+	TreeNode* insertIntoBST1(TreeNode* root, int val) {
+        if (root == NULL) return new TreeNode(val);
+        TreeNode* cur = root;
+        while (cur)
+        {
+            if (val < cur->val) {
+                if (cur->left)  cur = cur->left;
+                else {
+                    cur->left = new TreeNode(val);
+                    break;
+                }
+            }
+            else {
+				if (cur->right)  cur = cur->right;
+                else {
+                    cur->right = new TreeNode(val);
+                    break;
+                }    
+            }
+        }
+        return root;
+
+	}
+};
+
+class Solution450 {
+public:
+    //处理被删除节点的后事
+    TreeNode* handleDelNode(TreeNode* delNode) {
+		//将它的左节点放到右子树适当的位置
+        TreeNode* left = delNode->left;
+        TreeNode* right = delNode->right;
+        if (left == NULL) {
+            return right;
+        }
+        if (right == NULL) {
+            return left;
+        }
+        else {
+            TreeNode* cur=right;
+            while (cur->left!=NULL) {
+                cur = cur->left;
+            }
+            cur->left = left;
+        }
+        TreeNode* ret = delNode->right;
+        delete delNode;
+        return ret;
+    }
+
+	TreeNode* deleteNode(TreeNode* root, int key) {
+        TreeNode* cur = root;
+        TreeNode* delNode = NULL;
+        TreeNode* preNode=NULL;
+        while (cur!=NULL) {
+            if (key == cur->val) {
+                delNode = cur;
+                break;
+            }
+            else if (key < cur->val) {
+                preNode = cur;
+                cur = cur->left;
+            }
+            else {
+                preNode = cur;
+                cur = cur->right;
+            }      
+        }
+        if (delNode == NULL) return root;
+        if (preNode == NULL) return handleDelNode(root);
+        else if (preNode->left == delNode) {
+            preNode->left = handleDelNode(delNode);
+        }
+        else {
+            preNode->right = handleDelNode(delNode);
+        }
+
+        return root;
+	}
+};
+
+class Solution669 {
+public:
+    //思路：递归，只返回符合条件的节点
+    //当前节点只有两种情况;符合条件被不符合条件
+	TreeNode* trimBST(TreeNode* root, int low, int high) {
+       //停止条件
+        if(root==NULL){
+            return root;
+        }
+        //中序遍历
+        //当前节点不符合条件，那么递归找到符合条件的节点返回
+        if (high < root->val) {
+            return trimBST(root->left, low, high);//不用右边递归了，直接往左边找就ok了
+        }
+        if (root->val < low) {
+            return trimBST(root->right, low, high);//不用左边递归了，直接往左边找就ok了
+        }
+        //当前节点符合条件，继续遍历，完事返回本节点
+        root->left = trimBST(root->left, low, high);
+        root->right = trimBST(root->right, low, high);
+        return root;
+	}
+    TreeNode* trimBST1(TreeNode* root, int low, int high) {
+        if (root == NULL) return root;
+        //先到点上合适的位置去
+		while (root != NULL && (root->val<low || root->val>high)) {
+            if (root->val < low) {
+                root = root->right;
+            }
+            else {
+                root = root->left;
+            }
+        }
+        if (root == NULL) return NULL;
+        //将它的左右节点中不合适的全部删除掉
+        TreeNode* cur = root;
+        //处理左边节点,当左边不符合条件的时候，它的左分支也就全都不符合条件了，这样我们只需要它的右分支就可以了
+        while (cur != NULL){
+            while (cur->left != NULL && cur->left->val < low) {
+                cur->left = cur->left->right;
+            }     
+            cur = cur->left;
+        }
+        //处理右分支
+        cur = root;
+        while (cur != NULL) {
+            while (cur->right && cur->right->val > high) {
+                cur->right = cur->right->left;
+            }
+            cur = cur->right;
+        }
+        return root;
+
+    }
+};
+class Solution108 {
+public:
+	// 左闭右闭区间[left, right]
+    TreeNode* traversal(vector<int>& nums, int left, int right)
+    {
+        //停止条件
+        if (left > right) {
+            return NULL;
+        }
+        //中序遍历
+        TreeNode* node = new TreeNode();
+        int mid = left + (right - left + 1) / 2;
+        node->val = nums[mid];
+        //左
+        node->left = traversal(nums, left, mid - 1);
+        node->right = traversal(nums, mid + 1, right);
+        return node;
+    }
+	TreeNode* sortedArrayToBST(vector<int>& nums) {
+        return traversal(nums, 0, nums.size() - 1);
+	}
+};
+
+class Solution538 {
+public:
+    //遍历方式，右中左 
+    TreeNode* preNode = NULL;
+    void traversal(TreeNode* root) {
+		//停止条件
+		if (root == NULL) {
+            return;
+		}
+		//右
+		convertBST(root->right);
+		//中
+		if (preNode) {
+			root->val += preNode->val;
+		}
+        preNode = root;
+		//左
+		convertBST(root->left);
+    }
+
+	TreeNode* convertBST(TreeNode* root) {
+        traversal(root);
+        return root;
+	}
+};
+
+class Solution77_copy {
+public:
+    vector<vector<int>> result;
+    vector<int> path; // 用来存放符合条件结果
+    void backtracking(int n, int k, int startIndex) {
+        if (path.size() == k) {
+            result.push_back(path);
+            return;
+        }
+        for (int i = startIndex; i <= n - (k - path.size()) + 1; i++) {
+            path.push_back(i);//处理节点
+            backtracking(n, k, i + 1);
+            path.pop_back();
+
+        }
+
+    }
+
+	vector<vector<int>> combine(int n, int k) {
+        backtracking(n, k, 1);
+        return result;
+	}
+};
+class Solution216 {
+public:
+	vector<vector<int>> result; // 存放结果集 
+	vector<int> path; // 符合条件的结果
+    void backtracking(int targetSum, int k, int sum, int startIndex) {
+		if (sum > targetSum) { // 剪枝操作
+			return;
+		}
+        if (path.size() == k) {
+            if(sum==targetSum) result.push_back(path);
+            return;
+        }
+        for (int i = startIndex; i <= 9; i++) {
+            path.push_back(i);
+            backtracking(targetSum, k, sum + i, i + 1);
+            path.pop_back();
+        }
+
+    }
+
+	vector<vector<int>> combinationSum3(int k, int n) {
+        backtracking(n, k, 0, 1);
+        return result;
+	}
+};
+class Solution17 {
+public:
+	const string letterMap[10] = {
+	"", // 0
+	"", // 1
+	"abc", // 2
+	"def", // 3
+	"ghi", // 4
+	"jkl", // 5
+	"mno", // 6
+	"pqrs", // 7
+	"tuv", // 8
+	"wxyz", // 9
+	};
+	vector<string> result;
+	string s;
+    void backtracing(string& digits,int index) {
+		//结束条件
+		if (s.size() == digits.size()) {
+			result.push_back(s);
+            return;
+		}
+		//遍历
+        //思考清楚这棵树的形状，每个
+		int num = digits[index] - '0';
+		for (int j = 0; j < letterMap[num].size(); j++) {
+			s += letterMap[num][j];
+			backtracing(digits, index + 1);
+			s.pop_back();
+		}
+
+    }
+
+	vector<string> letterCombinations(string digits) {
+        if (digits == "") {
+            return {};
+        }
+        backtracing(digits, 0);
+        return result;
+	}
+};
+class Solution39 {
+public:
+    vector<vector<int>> result;
+    vector<int> path;
+    void backtracing(vector<int>& candidates, int target,int startIndex) {
+        if (target < 0) {
+            return;
+        }
+        if (target == 0) {
+            result.push_back(path);
+            return;
+        }
+        for (int i = startIndex; i < candidates.size()&& target - candidates[i]>=0; i++) {
+            path.push_back(candidates[i]);
+            backtracing(candidates, target-candidates[i], i);
+            path.pop_back();
+        }
+
+    }
+
+	vector<vector<int>> combinationSum(vector<int>& candidates, int target) {
+        sort(candidates.begin(), candidates.end()); // 需要排序
+        backtracing(candidates, target, 0);
+        return result;
+	}
+};
+
+class Solution40 {
+public:
+    vector<vector<int>> result;
+    vector<int> path;
+    void backtracing(vector<int>& candidates, int target,int startIndex) {
+        //停止条件
+        if (target < 0) {
+            return;
+        }
+        if (target == 0) {
+            result.push_back(path);
+            return;
+        }
+        for (int i = startIndex; i < candidates.size(); i++) {
+            if (i > startIndex && candidates[i] == candidates[i - 1]) {
+                continue;
+            }
+            path.push_back(candidates[i]);
+            backtracing(candidates, target - candidates[i], i + 1);
+            path.pop_back();
+
+        }
+    }
+
+	vector<vector<int>> combinationSum2(vector<int>& candidates, int target) {
+        sort(candidates.begin(), candidates.end()); // 需要排序
+        backtracing(candidates, target, 0);
+        return result;
+	}
+};
+
+class Solution131 {
+public:
+	vector<vector<string>> result;
+	vector<string> path; // 放已经放过挡板的路径
+    bool isPalindrome(string s,int left,int right) {
+        while (left < right) {
+            if (s[left] == s[right]) {
+                left++;
+                right--;
+            }
+            else {
+                return false;
+            }
+        }
+        return true;
+    }
+    //分割问题
+    void backtracing(string& s,int startIndex) {
+        //停止条件
+        if (startIndex>=s.size()) {
+            result.push_back(path);
+            return;
+        }
+        for (int i = startIndex; i < s.size(); i++) {
+            if (isPalindrome(s, startIndex, i)) {
+                string str = s.substr(startIndex, i - startIndex + 1);
+                path.push_back(str);
+            }
+            else {
+                continue;
+            }
+            backtracing(s, i + 1);
+            path.pop_back();
+        }
+
+    }
+
+
+	vector<vector<string>> partition(string s) {
+        backtracing(s, 0);
+        return result;
+	}
+};
+class Solution93 {
+public:
+    //分割问题
+    vector<string> result;
+    vector<string> path;
+    void backtracing(string& s,int startIndex) {
+        //终止条件
+        if (startIndex >= s.size()) {
+            movePath2Result();
+            return;
+        }
+        //单层逻辑
+            for (int i = startIndex; i < s.size() && path.size() < 4; i++) {
+            string str = s.substr(startIndex, i - startIndex + 1);
+            if ( isValid(str)) {
+                path.push_back(str);
+				backtracing(s, i + 1);
+				path.pop_back();
+            }
+            else {
+               break;
+            }
+
+        }
+
+    }
+    bool isValid(string& s) {
+        if (s.size() > 3) return false;
+        if (s.size() > 1 && s[0] == '0') return false;
+        int num = 0;
+        for (char c : s) {
+            if (c > '9' || c < '0') {
+                return false;
+            }
+            num = num * 10 + (c - '0');
+        }
+        if (num > 255) {
+            return false;
+        }
+        return true;
+
+    }
+    void movePath2Result() {
+        string str;
+        for (int i = 0; i < path.size()-1; i++) {
+            str += path[i]+".";
+        }
+        str += path.back();
+        result.push_back(str);
+    }
+
+
+	vector<string> restoreIpAddresses(string s) {
+        backtracing(s, 0);
+        return result;
+	}
+};
+class Solution78 {
+public:
+	vector<vector<int>> result;
+	vector<int> path;
+    void backtracking(vector<int>& nums, int startIndex) {
+        if (startIndex > nums.size()) {
+            return;
+        }
+        for (int i = startIndex; i < nums.size(); i++) {
+            // 处理本节点
+            path.push_back(nums[i]);//本节点的值 
+            result.push_back(path);//结果摘取本节点
+            backtracking(nums, i + 1);//到下一层
+            path.pop_back();//回溯回本层
+        }
+
+    }
+
+	vector<vector<int>> subsets(vector<int>& nums) {
+        result.push_back({});
+        backtracking(nums, 0);
+        return result;
+
+	}
+};
+
+class Solution90_copy {
+public:
+	vector<vector<int>> result;
+	vector<int> path;
+    void backtracing(vector<int>& nums, int startIndex, vector<bool>& used) {
+        //结束条件
+        if (startIndex > nums.size()) {
+            return;
+        }
+        for (int i = startIndex; i < nums.size(); i++) {
+            //单层逻辑
+            //判断是否重复
+            if (i > 0 && nums[i] == nums[i - 1]&&used[i-1]==false) {               
+                continue;
+            }
+            path.push_back(nums[i]);
+            result.push_back(path);
+			used[i] = true;//回溯前弄成true，给下一层看
+			backtracing(nums, i + 1, used);
+			used[i] = false;//回溯完弄成false，给本层看
+            path.pop_back();
+        }
+
+    }
+
+	vector<vector<int>> subsetsWithDup(vector<int>& nums) {
+        sort(nums.begin(), nums.end());
+        result.push_back({});
+        vector<bool> used(nums.size());
+        backtracing(nums, 0, used);
+        return result;
+	}
+};
+
+class Solution491 {
+public:
+	vector<vector<int>> result;
+	vector<int> path;
+    void backtracking(vector<int>& nums, int startIndex)
+    {
+        //结束条件
+        if (startIndex >= nums.size()) {
+            return;
+        }
+        //本层逻辑
+        unordered_set<int> uset; // 使用set来对本层元素进行去重
+        for (int i = startIndex; i < nums.size(); i++) {
+            //本节点逻辑
+            if ((!path.empty() && path.back() > nums[i])
+                || uset.find(nums[i]) != uset.end())
+            {
+                continue;
+            }
+            uset.insert(nums[i]);
+            path.push_back(nums[i]);
+            if (path.size() >= 2)result.push_back(path);
+            backtracking(nums, i + 1);
+            path.pop_back();
+        }
+
+    }
+	vector<vector<int>> findSubsequences(vector<int>& nums) {
+        backtracking(nums, 0);
+        return result;
+	}
+};
+class Solution46 {
+public:
+	vector<vector<int>> result;
+	vector<int> path;
+    void  backtracing(vector<int>& nums,vector<bool>& used) {
+        //结束条件
+        if (path.size() == nums.size()) {
+            result.push_back(path);
+            return;
+        }
+        //每一层的逻辑
+        for (int i = 0; i < nums.size(); i++) {
+            if(used[i]==true)
+                continue;
+            path.push_back(nums[i]);
+            used[i] = true;
+            backtracing(nums, used);
+            path.pop_back();
+            used[i] = false;
+
+        }
+
+    }
+
+	vector<vector<int>> permute(vector<int>& nums) {
+        vector<bool> used(nums.size(), false);
+        backtracing(nums, used);
+        return result;
+	}
+};
+class Solution47 {
+public:
+	vector<vector<int>> result;
+	vector<int> path;
+    void backtracing(vector<int> nums,vector<bool>& used) {
+        if (path.size() == nums.size()) {
+            result.push_back(path);
+            return;
+        }
+        for (int i = 0; i < nums.size(); i++) {
+            if (used[i] == true ||
+                (i > 0 && nums[i] == nums[i - 1] && used[i - 1] == false) //同一层这个节点已经把后面的情况算过了，去重
+                )
+            {
+                continue;
+            }
+            path.push_back(nums[i]);
+            used[i] = true;
+            backtracing(nums,used);
+            path.pop_back();
+            used[i] = false;
+        }
+
+    }
+
+	vector<vector<int>> permuteUnique(vector<int>& nums) {
+        sort(nums.begin(), nums.end());
+        vector<bool> used(nums.size(), false);
+        backtracing(nums, used);
+        return result;
+	}
+};
+
+class Solution332 {
+public:
+    unordered_map<string, map<string, int>> targets;
+
+    bool backtracing(int ticketsNum, vector<string>& result) {
+        //结束条件
+        if (result.size() == ticketsNum + 1) {
+            return true;
+        }
+        //单层逻辑
+        for (auto& city : targets[result.back()]) {  //单层树
+            //单个节点
+            if (city.second > 0) {
+                result.push_back(city.first);
+                city.second--;
+                if (backtracing(ticketsNum, result)) return true;
+                city.second++;
+                result.pop_back();
+            }
+        }
+        return false;
+    }
+
+	vector<string> findItinerary(vector<vector<string>>& tickets) {
+        vector<string> result;
+        for (vector<string> vec : tickets) {
+            targets[vec[0]][vec[1]]++;
+        }
+        result.push_back("JFK");
+        backtracing(tickets.size(), result);
+        return result;
+
+	}
+};
+class Solution51 {
+public:
+    vector<vector<string>> result;
+
+    bool isValid(int row,int col, const vector<string>& chessBoard) {
+        //不能在同一列
+        for (int i = 0; i <= row - 1; i++) {
+            if (chessBoard[i][col] == 'Q')
+                return false;
+        }
+        //不能是斜着的  ,参考了博主的方法，真机智啊
+        //45度检查
+        for (int i = row - 1, j = col - 1; i >= 0 && j >= 0; i--, j--) {
+            if (chessBoard[i][j] == 'Q') {
+                return false;
+            }
+        }
+        //135度检查
+        for (int i = row - 1, j = col + 1; i >= 0 && j >= 0; i--, j++) {
+			if (chessBoard[i][j] == 'Q') {
+				return false;
+			}
+		}
+        return true;     
+
+    }
+
+    void backtracking(int row, vector<string>& chessBoard) {
+        //结束条件 
+        if (row == chessBoard.size()) {
+            result.push_back(chessBoard);
+            return;
+        }
+        //单层遍历
+        for (int i = 0; i < chessBoard.size(); i++) {
+            //单个节点的逻辑
+            if (isValid(row, i,chessBoard)) {
+                chessBoard[row][i] = 'Q';
+                backtracking(row + 1,chessBoard);
+                chessBoard[row][i] = '.';
+            }
+        }
+
+    }
+
+	vector<vector<string>> solveNQueens(int n) {
+        vector<string> chessBoard(n, string(n, '.'));
+        backtracking(0, chessBoard);
+        return result;
+	}
+};
+
+class Solution37 {
+public:
+    //认为是81个点的递归？
+    bool isValid(int row, int col,char val,const vector<vector<char>>& board) {
+        //每一行
+        for (int i = 0; i < 9; i++) {
+           if (board[row][i] == val) {
+                return false;
+           }
+        }
+        //每一列
+        for (int i = 0; i < 9; i++) {
+            if (board[i][col] == val) {
+                return false;
+            }
+        }
+        //每个小方格
+        int bottom = row / 3 * 3;
+        int left = col / 3 * 3;
+        for (int i = bottom; i < bottom + 3; i++)
+        {
+            for (int j = left; j < left + 3; j++) 
+            {
+                if (board[i][j] == '.' || (i == row && j == col)) {
+                    continue;
+                }
+                else {
+                    if (val == board[i][j]) {
+                        return false;
+                    }
+                }                
+            }
+        }
+        return true;
+    }
+
+    
+    bool backtracking(vector<vector<char>>& board, int sumNum) {
+        //终止条件
+        if (sumNum == 81) {
+            return true;
+        }
+
+        int row = sumNum / 9;
+        int col = sumNum % 9;
+        if (board[row][col] != '.') {
+            sumNum++;
+            return backtracking(board, sumNum);
+        }
+        else {        
+            //单层逻辑,看这个点放0-9合不合适
+			for (char i = '0'; i <= '9'; i++) {
+				if (isValid(row, col, i,board)) {
+                    board[row][col] = i;
+                    sumNum++;
+                    if (backtracking(board, sumNum)) return true;
+                    sumNum--;
+                    board[row][col] = '.';
+				}
+			}
+            return false;
+        }
+    }
+    
+	void solveSudoku(vector<vector<char>>& board) {
+        backtracking(board,0);
+	}
+	void printVector2(vector<vector<char>> dp)
+	{
+        system("clear");
+		for (auto it = dp.begin(); it < dp.end(); it++)
+		{
+			for (auto vit = it->begin(); vit < it->end(); vit++)
+			{
+				cout << (*vit) << "\t";
+			}
+			cout << endl;
+		}
+		cout << "------------------------------------------------" << endl;
+	}
+};
+
+class Solution455 {
+public:
+	int findContentChildren(vector<int>& children, vector<int>& biscuit) {
+        sort(children.begin(), children.end());
+        sort(biscuit.begin(), biscuit.end());
+        int bisIndex = biscuit.size() - 1;
+        int num = 0;
+        for (int i = children.size() - 1; i >= 0; i--) { //小孩从大到小，最大值满足不了那就拉倒了，下一个
+            if (bisIndex >= 0 && biscuit[bisIndex] >= children[i]) {//饼干能满足这个小孩
+                num++;
+                bisIndex--;
+            }
+        }
+        return num;
+	}
+};
+
+class Solution376 {
+public:
+	int wiggleMaxLength(vector<int>& nums) {
+        if (nums.size() < 2) {
+            return nums.size();
+        }
+        int curdiff = 0;
+        int prediff = 0;
+        int result = 1;
+        for (int i = 1; i < nums.size(); i++) {
+            curdiff = nums[i] - nums[i - 1];
+            if ((curdiff > 0 && prediff <= 0) || (curdiff < 0 && prediff >= 0)) {
+                result++;
+                prediff = curdiff;
+            }
+        }
+        return result;
+	}
+};
+
+class Solution53 {
+public:
+	int maxSubArray(vector<int>& nums) {
+		int sum = 0;
+		int result = INT_MIN;
+		for (int num : nums) {
+			sum += num;
+			result = max(result, sum);
+			if (sum < 0) {
+				sum = 0;
+			}
+		}
+		return result;
+	}
+};
+class Solution55 {
+public:
+	bool canJump(vector<int>& nums) {
+		if (nums.size() <= 1) return true;
+		int maxlen = 0;
+		for (int i = 0; i < nums.size() - 1; i++) {
+			if (i > maxlen) {
+				return false;
+			}
+			maxlen = max(maxlen, i + nums[i]);
+			if (maxlen >= nums.size() - 1) {
+				return true;
+			}
+
+		}
+		return false;
+	}
+};
+class Solution45 {
+public:
+    //想象一下跑跑卡丁车的过程，跑到一定程度告诉你下一个距离在哪
+	int jump(vector<int>& nums) {
+		if (nums.size() == 1) return 0;
+		int curDistance = 0;
+		int nextDistance = 0;
+		int curIndex = 0;
+		int result = 1;
+		for (int i = 0; i < nums.size() - 1; i++) {
+            //更新棋子位置
+			nextDistance = max(i + nums[i], nextDistance);
+			if (nextDistance >= nums.size() - 1) {
+				break;
+			}
+			if (curDistance == i) {
+				result++;
+				curDistance = nextDistance;
+			}
+		}
+		return result;
+	}
+};
+
+class Solution1005 {
+public:
+    static bool cmp(int a, int b) {
+        return abs(a) > abs(b);
+    }
+
+	int largestSumAfterKNegations(vector<int>& A, int K) {
+        sort(A.begin(), A.end(), cmp);
+        for (int i = 0; i < A.size(); i++) {
+            if (A[i] < 0 && K>0) {
+                A[i] = -A[i];
+                K--;
+           }
+        }
+		if (K%2) {
+            A[A.size() - 1] = -A[A.size() - 1];
+		}
+		int sum = 0;
+		for (int i = 0; i < A.size(); i++) {
+			sum += A[i];
+		}
+
+        return sum;
+	}
+};
+class Solution134 {
+public:
+	int canCompleteCircuit(vector<int>& gas, vector<int>& cost) {
+        int start = 0;
+        int n = cost.size();
+        int curSum = 0;
+        for (int i = 0; i < n; i++) {
+            curSum += gas[i] - cost[i];
+
+            if (curSum < 0) {
+                start = (start + n - 1) % n;
+                curSum += gas[start] - cost[start];
+                while (curSum < 0 && start != i) {
+					start = (start + n - 1) % n;
+                    curSum += gas[start] - cost[start];
+                }
+				if (start == i) {
+					return curSum >= 0 ? start : -1;
+				}
+            }
+        }
+        return start;
+	}
+};
+
+class Solution135 {
+public:
+	int candy(vector<int>& ratings) {
+        int n = ratings.size();
+        vector<int> result(n, 1);
+        for (int i = 1; i < n; i++) {
+            if (ratings[i] > ratings[i - 1] && result[i] <= result[i - 1]) {
+                result[i] = result[i - 1] + 1;
+            }
+        }
+        for (int i = n - 2; i >= 0; i--) {
+            if (ratings[i] > ratings[i + 1] && result[i] <= result[i + 1]) {
+                result[i] = result[i + 1] + 1;
+            }
+        }
+        int sum = 0;
+        for (int i = 0; i < n; i++) {
+            sum += result[i];
+        }
+
+        return sum;
+
+	}
+};
+
+class Solution860 {
+public:
+	bool lemonadeChange(vector<int>& bills) {
+        unordered_map<int, int> money;
+		for (int cur : bills) {
+            if (cur == 10) {
+                if (money[5] > 0) money[5]--;
+                else return false;
+            }
+            else if (cur == 20) {
+                if (money[10] > 0 && money[5] > 0) {
+                    money[10]--;
+                    money[5]--;
+                }
+                else if (money[5] >= 3) {
+                    money[5] -= 3;
+                }
+                else return false;
+            }
+            money[cur]++;
+        }
+        return true;
+	}
+};
+
+class Solution425 {
+public:
+	int findMinArrowShots(vector<vector<int>>& points) {
+        if (points.empty()) return 0;
+        sort(points.begin(), points.end(), [](vector<int> a, vector<int> b) {
+            return a[0] < b[0];
+            });
+        int m_end = points[0][1];
+        int result = 1;
+        for (int i = 1; i < points.size(); i++) {
+            if (points[i][0] > m_end) {
+                result++;
+                m_end = points[i][1];
+            }
+            m_end = min(m_end, points[i][1]);
+        }
+        return result;
+	}
+};
+class Solution435 {
+public:
+	int eraseOverlapIntervals(vector<vector<int>>& intervals) {
+        if (intervals.empty()) return 0;
+        sort(intervals.begin(), intervals.end(), [](vector<int>& a, vector<int>& b) {
+            return a[0] < b[0];
+            }
+        );
+        int m_end = intervals[0][1];
+        int result = 0;
+        for (int i = 1; i < intervals.size(); i++) {
+            if (intervals[i][0] >= m_end) {
+                m_end = intervals[i][1];
+                continue;
+            }
+            else {
+                result++;
+                m_end = min(m_end, intervals[i][1]);
+            }      
+        }
+        return result;
+	}
+};
+
+class Solution763 {
+public:
+	vector<int> partitionLabels1(string letters) {
+        if (letters.empty()) return {};
+        unordered_map<char, pair<int, int>> map;
+        for (int i = 0; i < letters.size(); i++) {
+            if (map.find(letters[i]) == map.end()) {
+                map[letters[i]].first = i;
+            }
+            map[letters[i]].second = i;
+        }
+        vector<pair<int, int>> vec;
+        for (auto letter : map) {
+            vec.push_back(letter.second);
+        }
+        sort(vec.begin(), vec.end(), [](pair<int, int>& a, pair<int, int>& b) {
+            return a.first < b.first;
+            }
+        );
+        int start = 0;
+        int end = vec[0].second;
+        vector<int> result;
+        for (int i = 1; i < vec.size(); i++) {
+            if (vec[i].first > end) {
+                result.push_back(end - start + 1);
+                start = vec[i].first;
+            }
+            end = max(end, vec[i].second);
+        }
+        result.push_back(end - start + 1);
+        return result;
+	}
+    vector<int> partitionLabels(string letters) {
+        unordered_map<char, int> boarder;//记录最远边界
+        for (int i = 0; i < letters.size(); i++) {
+            boarder[letters[i]] = i;
+        }
+        int start = 0;
+        int end = boarder[letters[0]];
+        vector<int> result;
+        for (int i = 0; i < letters.size(); i++) {
+            end = max(end, boarder[letters[i]]);
+            if (end == i) {
+                result.push_back(end - start + 1);
+                start = i + 1;
+            }
+        }
+        return result;
+    }
+
+};
+
+class Solution56 {
+public:
+	vector<vector<int>> merge(vector<vector<int>>& intervals) {
+        if (intervals.empty()) return {};
+        sort(intervals.begin(), intervals.end(), [](vector<int>& a, vector<int>& b){
+            return a[0] < b[0];
+        }
+        );
+        int start = intervals[0][0];
+        int end = intervals[0][1];
+        vector<vector<int>> result;
+        for (int i = 1; i < intervals.size(); i++) {
+            if (intervals[i][0] > end) {
+                result.push_back({ start,end });
+                start = intervals[i][0];               
+            }
+            end = max(end, intervals[i][1]);        
+            
+        }
+		result.push_back({ start,end });
+        return result;
+	}
+};
+
+class Solution738 {
+public:
+	int monotoneIncreasingDigits1(int N) {
+        vector<int> num;
+        string str = to_string(N);
+        if (str.size() <= 1) return N;
+        int spiltIndex = -1;
+        for (int i = 1; i < str.size(); i++) {
+            if (str[i - 1] > str[i]) {
+                spiltIndex = i;
+                break;
+            }
+        }
+        if (spiltIndex == -1) return N;
+        else {
+            // i以后都变为9，i以前第一个为i-1的减去1
+            spiltIndex--;
+            char temp = str[spiltIndex];
+            while (spiltIndex >= 0&&str[spiltIndex]==temp) {                
+                spiltIndex--;
+            }
+            spiltIndex++;
+            str[spiltIndex]--;
+            for (int i = spiltIndex + 1; i < str.size(); i++) {
+                str[i] = '9';
+            }
+        }
+        return stoi(str);
+
+	}
+    int monotoneIncreasingDigits(int N) {
+		vector<int> num;
+		string str = to_string(N);
+		if (str.size() <= 1) return N;
+            
+        for (int i = str.size() - 2; i >= 0; i--) {
+            if (str[i] > str[i + 1]) {
+                spiltIndex = i;
+                str[i]--;
+            }
+        }
+
+        for (int i = spiltIndex+1; i < str.size(); i++) {
+            str[i] = '9';
+
+        }
+        return stoi(str);
+    }
+};
+
