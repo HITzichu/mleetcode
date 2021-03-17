@@ -4,11 +4,10 @@
 int main()
 {
 
-	Solution134 solution;
-	vector<int> gas = {3,3,4};
-	vector<int> cost = { 3,4, 4 };
-
-	solution.canCompleteCircuit(gas,cost);
+	Solution343 solution;
+	vector<int> cost =
+	{ 10, 15, 20 };
+	solution.integerBreak(5);
 
 	return 0;
 }

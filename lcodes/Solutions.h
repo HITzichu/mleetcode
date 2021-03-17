@@ -4384,7 +4384,7 @@ public:
 		vector<int> num;
 		string str = to_string(N);
 		if (str.size() <= 1) return N;
-            
+        int spiltIndex = str.size() - 1;
         for (int i = str.size() - 2; i >= 0; i--) {
             if (str[i] > str[i + 1]) {
                 spiltIndex = i;
@@ -4399,4 +4399,116 @@ public:
         return stoi(str);
     }
 };
+//----------------------动态规划--------------------------------
 
+class Solution509 {
+public:
+	int fib(int n) {
+        if (n <= 1) return n;
+        vector<int> dp(n + 1);//dp含义：斐波那契数列的值
+        dp[0] = 0;
+        dp[1] = 1;
+        for (int i = 2; i <= n; i++) {
+            dp[i] = dp[i - 1] + dp[i - 2];
+        }
+        return dp[n];
+	}
+};
+
+class Solution70 {
+public:
+	int climbStairs(int n) {
+        if (n <= 1) return n;
+        vector<int> dp(n + 1);//dp代表爬到第i层的方法数
+        dp[1] = 1;
+        dp[2] = 2;
+        for (int i = 3; i <= n; i++) {
+            dp[i] = dp[i - 1] + dp[i - 2];
+        }
+        printVector(dp);
+        return dp[n];
+	}
+};
+
+class Solution746 {
+public:
+	int minCostClimbingStairs(vector<int>& cost) {
+		int n = cost.size();
+		if (n <= 2) return 0;
+        vector<int> dp(n + 1);
+        for (int i = 2; i <= n; i++) {
+            dp[i] = min(dp[i - 2] + cost[i - 2], dp[i - 1] + cost[i - 1]);//从这里走出来需要的能量值
+        }
+        printVector(dp);
+        return dp[n];
+	}
+};
+class Solution62 {
+public:
+	int uniquePaths1(int m, int n) {
+        vector<vector<int>> dp(m, vector<int>(n));
+        for (int i = 0; i < m; i++) {
+            dp[i][0] = 1;
+        }
+        for (int j = 0; j < n; j++) {
+            dp[0][j] = 1;
+        }
+        for (int i = 1; i < m; i++) {
+            for (int j = 1; j < n; j++) {
+                dp[i][j] = dp[i - 1][j] + dp[i][j - 1];
+            }
+        }
+        printVector2(dp);
+        return dp[m - 1][n - 1];
+
+	}
+    /*
+    int uniquePaths(int m, int n) {
+        long long numerator = m + n - 2;//分子
+        long long denominator = m - 1;//分母
+        int result1 = 1;
+        int result2 = 1;
+        int result = 1;
+        for (int i = m - 1; i > 0; i--) {
+            result1 *= (numerator--);
+            result2 *= denominator--;
+            if (result2!=0&&result1 % result2 == 0) {
+                result *= result1 / result2;
+                result1 = 1;
+                result2 = 1;
+            }
+
+        }
+        return re;
+    }
+    */
+};
+class Solution343 {
+public:
+    int integerBreak(int n) {
+        //特殊条件处理
+
+        //表示dp
+        vector<int> dp(n + 1);//dp表示第n个数的最大乘积
+        //初始化dp
+        dp[1] = 1;
+        dp[2] = 1;
+        //寻找递推关系式
+        //dp[i]=max
+        for (int i = 3; i <= n; i++) {
+            for (int j = 2; j < i; j++) {
+                //i=  j+  i-j
+                dp[i] = max(dp[i],
+                    max((i - j) * j,
+                        max(dp[i - j] * j,
+                            max((i-j)*dp[j],dp[i-j]*dp[j]))));
+            }       
+        }
+        //验证
+        printVector(dp);
+        return dp[n];
+
+    }
+};
+
+//背包问题
