@@ -4512,3 +4512,269 @@ public:
 };
 
 //背包问题
+class bag_problem {
+public:
+    void test_2_wei_bag_problem1() {
+        vector<int> weight = { 1, 3, 4 };
+        vector<int> value = { 15, 20, 30 };
+        int bagWeight = 4;
+        vector<vector<int>> dp(weight.size(), vector<int>(bagWeight + 1, 0));
+        //初始化
+        for (int j = bagWeight; j >= weight[0]; j--) {
+            dp[0][j] = dp[0][j - weight[0]] + value[0];
+        }
+        for (int i = 1; i < weight.size(); i++) { //选几个包
+            for (int j = 0; j < bagWeight + 1; j++) {
+                if (j < weight[i]) {
+                    dp[i][j] = dp[i][j];
+                }
+                else {
+                    dp[i][j] = max(dp[i - 1][j], dp[i - 1][j - weight[i]] + value[i]);
+                }
+            }
+        }
+        cout << dp[weight.size() - 1][bagWeight] << endl;
+    }
+	void test_2_wei_bag_problem2() {
+		vector<int> weight = { 1, 3, 4 };
+		vector<int> value = { 15, 20, 30 };
+		int bagWeight = 4;
+        vector<int> dp(bagWeight + 1, 0);
+		//初始化
+		for (int i = 0; i < weight.size(); i++) { //选几个包
+            for (int j = bagWeight; j >= weight[i]; j--) {
+                dp[j] = max(dp[j], dp[j - weight[i]] + value[i]);
+			}
+		}
+		cout << dp[bagWeight] << endl;
+	}
+};
+class Solution416 {
+public:
+    bool backtracking(vector<int>& nums,vector<bool>& isused, int sum, int target, int start ) {
+        //返回条件
+        if (sum > target) {
+            return false;
+        }
+        else if(sum==target) {
+            return true;
+        }
+        for (int i = start; i < nums.size(); i++) {
+            if (i > 0 && nums[i] == nums[i - 1] && isused[i - 1] == false) {
+                continue;
+            }
+            isused[i] = true;
+            if (backtracking(nums, isused, sum + nums[i], target, i + 1)) return true;
+            isused[i] = false;
+        }
+        return false;
+    }
+
+    //重复逻辑：装了1，2，5和装 2 5的情况是交叉的，装1，2，5的情况其实就是装（2+5）的条件下+1
+	bool canPartition1(vector<int>& nums) {
+        sort(nums.begin(), nums.end());
+        vector<bool> isused(nums.size(), false);
+        int target = 0;
+        for (int i = 0; i < nums.size(); i++) {
+            target += nums[i];
+        }
+        if (target % 2 == 1) return false;
+        else target /= 2;
+        return backtracking(nums, isused, 0, target, 0);
+	}
+
+    bool canPartition(vector<int>& nums) {
+        if (nums.empty()) return false;
+        int sum = 0;
+        for (int num : nums) {
+            sum += num;
+        }
+        if (sum % 2 == 1) return false;
+        else sum /= 2;
+        vector<int> dp(sum + 1);//定义dp[i][j]为装入前n个数的最大值
+        for (int i = 0; i < nums.size(); i++) {
+            for (int j = sum; j >= nums[i]; j--) {
+                dp[j] = max(dp[j], dp[j - nums[i]] + nums[i]);
+            }
+        }
+
+        //printVector2(dp);
+		if (dp[sum] == sum) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+};
+
+/*
+class Solution698 {
+public:
+    vector<vector<int>> group;
+
+    bool calculate(vector<int>& nums,int target) {
+        int sum = 0;
+        for (int num : nums) {
+            sum += num;
+        }
+        if (sum == target) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+    //分组
+    void backtracking() {
+
+    }
+
+
+	bool canPartitionKSubsets(vector<int>& nums, int k) {
+        int sum = 0;
+		for (int num : nums) {
+			sum += num;
+		}
+        if (sum % k != 0) {
+            return false;
+        }
+        else {
+            sum /= k;
+        }
+        //分组 Cn k种方法
+		vector<vector<int>> group(k);
+
+
+	}
+};
+*/
+class Solution1049 {
+public:
+	int lastStoneWeightII(vector<int>& stones) {
+        if (stones.size() == 1) return stones[0];
+        int sum = 0;
+        for (int s : stones) {
+            sum += s;
+        }
+        int package = sum / 2;//背包的大小
+        vector<int> dp(package + 1);
+        for (int i = 0; i < stones.size(); i++) {
+            for (int j = package; j >= stones[i]; j--) {
+                dp[j] = max(dp[j], dp[j - stones[i]]+stones[i]);
+            }
+            printVector(dp);
+            cout << endl;
+        }
+        
+        return (sum - dp.back())-dp.back();
+	}
+};
+
+class Solution494 {
+public:
+    //加法x 减法sum-x x-(sum-x)=S  x=(S+sum)/2
+	int findTargetSumWays1(vector<int>& nums, int S) {
+        int sum = 0;
+        int target = 0;
+        for (int num : nums) {
+            sum += num;
+        }
+        if ((S + sum) % 2 == 1) {
+            return 0;
+        }
+        else {
+            target = (S + sum) / 2;
+        }
+        //存在相同子结构,本问题的解和之前的问题有关系,变化的维度：包的大小，可选的数的数量
+        vector<vector<int>> dp(nums.size(),vector<int>(target+1));//dp[i][j]含义：用0-i的数填满容量为j的包包，一共有几种填充方案
+        dp[0][0] = 1;
+        dp[0][nums[0]] = 1;
+        for (int i = 1; i < nums.size(); i++) {
+            for (int j = 0; j <= target; j++) {
+                if (j < nums[i]) dp[i][j] = dp[i - 1][j];
+                else dp[i][j] = dp[i - 1][j] + dp[i - 1][j - nums[i]];
+            }
+        }
+        printVector2(dp);
+        return dp[nums.size() - 1].back();
+
+	}
+    int findTargetSumWays(vector<int>& nums, int S) {
+		int sum = 0;
+		int target = 0;
+		for (int num : nums) {
+			sum += num;
+		}
+        if (S > sum) return 0;
+		if ((S + sum) % 2 == 1) {
+			return 0;
+		}
+		else {
+			target = (S + sum) / 2;
+		}
+        vector<int> dp(target + 1);
+        dp[0] = 1;
+        for (int i = 0; i < nums.size(); i++) {
+            for (int j = target; j >= nums[i]; j--) {
+                dp[j] = dp[j] + dp[j - nums[i]];
+            }
+            printVector(dp);
+            cout << endl;
+        }
+        return dp.back();
+        
+    }
+};
+class Solution474 {
+public:
+	int findMaxForm(vector<string>& strs, int m, int n) {
+        vector<vector<int>> map(strs.size(), vector<int>(2,0));
+        for (int i = 0; i < strs.size();i++) {
+            for (char c : strs[i]) {
+                if (c == '0') map[i][0]++;
+                else map[i][1]++;
+            }
+        }
+		printVector2(map);
+
+        vector<vector<int>> dp(m + 1, vector<int>(n + 1));//m为0，n为1
+        //二维背包
+        for (int i = 0; i < strs.size(); i++) { //物品i
+            for (int j = m; j >= map[i][0]; j--) {
+                for (int k = n; k >= map[i][1]; k--) {
+                    dp[j][k] = max(dp[j][k], dp[j - map[i][0]][k - map[i][1]] + 1);
+                }
+            }
+		}
+		printVector2(dp);
+        return dp[m][n];
+	}
+};
+class Solution518 {
+public:
+	int change(int amount, vector<int>& coins) {
+        vector<int> dp(amount + 1);
+        dp[0] = 1;
+        
+        for (int i = 0; i < coins.size(); i++) {
+            for (int j = coins[i]; j <= amount; j++) {
+                dp[j] = dp[j] + dp[j - coins[i]];
+            }
+            printVector(dp);
+            cout << endl;
+        }   
+        cout << "------------------------------------------" << endl;
+		for (int j = 0; j <= amount; j++) { // 遍历背包容量
+			for (int i = 0; i < coins.size(); i++) { // 遍历物品
+				if (j - coins[i] >= 0) {
+					dp[j] += dp[j - coins[i]];
+                }
+			}
+            printVector(dp);
+            cout << endl;
+		}
+        return dp.back();
+	}
+};
